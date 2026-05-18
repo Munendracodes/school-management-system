@@ -1,8 +1,9 @@
 import redis
-from app.config import REDIS_URL
+from app.configs.settings import settings
+from app.core.logger import logger
 
-redis_client = redis.Redis.from_url(REDIS_URL)
+redis_client = redis.Redis.from_url(settings.REDIS_URL)
 
 redis_client.ping()
 
-print("Redis connected successfully")
+logger.info("Redis connected successfully")
