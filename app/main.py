@@ -1,8 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI #ignore-type
 
+from app.database.db import connection
+from app.redis_client import redis_client
 
 app = FastAPI(title="School Management System API")
 
+
 @app.get("/")
-async def health_check():
-    return {"status": "healthy"}
+def health():
+    return {
+        "status": "running",
+        "database": "connected",
+        "redis": "connected"
+    }
