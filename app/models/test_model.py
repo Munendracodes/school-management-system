@@ -1,11 +1,12 @@
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
-from app.database.base import Base
+from app.database.base_model import BaseModel
 
 
-class TestTable(Base):
+class TestTable(BaseModel):
+
     __tablename__ = "test_table"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String)
