@@ -15,10 +15,11 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies first (better Docker caching)
+# Install dependencies first
 COPY requirements.txt .
 
 RUN pip install --upgrade pip
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
@@ -27,5 +28,5 @@ COPY . .
 # Expose FastAPI port
 EXPOSE 8000
 
-# Start application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Run migrations + start app
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
