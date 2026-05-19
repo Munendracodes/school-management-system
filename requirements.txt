@@ -3,7 +3,6 @@ uvicorn[standard]
 
 sqlalchemy
 psycopg[binary]
-
 alembic
 
 redis
@@ -12,9 +11,10 @@ python-dotenv
 
 pydantic
 pydantic-settings
+email-validator
 
 python-jose[cryptography]
 
 passlib[bcrypt]
 
-email-validator
+python-multipart
