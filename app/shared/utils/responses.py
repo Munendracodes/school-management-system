@@ -1,0 +1,25 @@
+from fastapi.responses import JSONResponse
+
+
+class ResponseBuilder:
+
+    @staticmethod
+    def success(message: str, data=None):
+        return JSONResponse(
+            status_code=200,
+            content={
+                "success": True,
+                "message": message,
+                "data": data,
+            },
+        )
+
+    @staticmethod
+    def error(message: str):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "message": message,
+            },
+        )

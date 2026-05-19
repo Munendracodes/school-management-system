@@ -1,22 +1,24 @@
-from fastapi import Depends, FastAPI
-from sqlalchemy import text
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from app.core.config.settings import settings
+from app.core.exceptions.handlers import register_exception_handlers
+from app.modules.settings.router import router as settings_router
+from fastapi.staticfiles import StaticFiles
 
-from app.database.db import get_db
-from app.redis_client import redis_client
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+)
 
-app = FastAPI(title="School Management System API")
+app.mount(
+    "/static",
+    StaticFiles(directory="app/static"),
+    name="static",
+)
 
+register_exception_handlers(app)
+
+app.include_router(settings_router)
 
 @app.get("/")
-def health(db: Session = Depends(get_db)):
-
-    db.execute(text("SELECT 1"))
-
-    redis_client.ping()
-
-    return {
-        "status": "running",
-        "database": "connected",
-        "redis": "connected"
-    }
+def root():
+    return {"message": "School Management System API"}

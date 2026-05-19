@@ -1,29 +1,10 @@
 # School Management System
 
-Multi-tenant School Management System built using:
-
+Updated Week 1 foundation for:
 - FastAPI
 - PostgreSQL
 - Redis
-- Docker
 - SQLAlchemy 2.0
 - Alembic
-
-## Features
-
-- Multi-tenant architecture
-- JWT authentication (upcoming)
-- RBAC (upcoming)
-- Student management
-- Teacher management
-- Attendance
-- Homework
-- Notifications
-
-## Local Setup
-
-### Start containers
-
-```bash
-docker compose up --build
-```
+- JWT Authentication
+- Single-Tenant White-Label ERP Architecture

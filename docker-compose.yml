@@ -1,38 +1,72 @@
-version: '3.9'
+version: "3.9"
 
 services:
 
-  backend:
-    build: .
-    container_name: school_backend
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: school_api
+
+    restart: always
+
     ports:
       - "8000:8000"
+
     volumes:
-      - .:/code
-    env_file:
-      - .env
+      - .:/app
+
     depends_on:
       - postgres
       - redis
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+    env_file:
+      - .env
+
+    networks:
+      - school_network
 
   postgres:
     image: postgres:16
+
     container_name: school_postgres
+
+    restart: always
+
+    ports:
+      - "5432:5432"
+
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: school_db
-    ports:
-      - "5432:5432"
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    networks:
+      - school_network
+
   redis:
-    image: redis:7
+    image: redis:7-alpine
+
     container_name: school_redis
+
+    restart: always
+
     ports:
       - "6379:6379"
 
+    volumes:
+      - redis_data:/data
+
+    networks:
+      - school_network
+
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  school_network:
