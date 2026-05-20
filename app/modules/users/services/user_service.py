@@ -1,18 +1,27 @@
+from math import ceil
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 
 from app.modules.users.models.user_model import UserModel
+
 from app.modules.users.repositories.role_repository import (
     RoleRepository,
 )
+
 from app.modules.users.repositories.user_repository import (
     UserRepository,
 )
+
 from app.modules.users.schemas.user_schema import (
     CreateUserRequest,
+    UpdateUserRequest,
 )
+
 from app.modules.users.utils.password_handler import (
     hash_password,
 )
+
 from app.modules.users.utils.pin_generator import (
     generate_temporary_pin,
 )
@@ -25,19 +34,33 @@ class UserService:
         db: Session,
         payload: CreateUserRequest,
         created_by: str | None = None
-    ) -> dict:
+    ):
 
-        existing_user = (
+        existing_mobile = (
             UserRepository.get_by_mobile_number(
                 db,
                 payload.mobile_number
             )
         )
 
-        if existing_user:
+        if existing_mobile:
             raise ValueError(
                 "Mobile number already exists"
             )
+
+        if payload.email:
+
+            existing_email = (
+                UserRepository.get_by_email(
+                    db,
+                    payload.email
+                )
+            )
+
+            if existing_email:
+                raise ValueError(
+                    "Email already exists"
+                )
 
         role = RoleRepository.get_by_id(
             db,
@@ -66,7 +89,7 @@ class UserService:
             "is_first_login": True
         }
 
-        user: UserModel = UserRepository.create(
+        user = UserRepository.create(
             db,
             user_data
         )
@@ -74,17 +97,104 @@ class UserService:
         return {
             "message": "User created successfully",
             "temporary_pin": temporary_pin,
-            "user": {
-                "id": str(user.id),
-                "full_name": user.full_name,
-                "mobile_number": user.mobile_number,
-                "role": role.name
-            }
+            "user": user
         }
 
     @staticmethod
-    def get_all_users(
-        db: Session
-    ) -> list[UserModel]:
+    def get_users(
+        db: Session,
+        page: int,
+        size: int,
+        search: str | None = None,
+        role_id: UUID | None = None,
+        is_active: bool | None = None
+    ):
 
-        return UserRepository.get_all(db)
+        users, total = UserRepository.get_users(
+            db=db,
+            page=page,
+            size=size,
+            search=search,
+            role_id=role_id,
+            is_active=is_active
+        )
+
+        return {
+            "items": users,
+            "total": total,
+            "page": page,
+            "size": size,
+            "pages": ceil(total / size)
+        }
+
+    @staticmethod
+    def get_user_by_id(
+        db: Session,
+        user_id: UUID
+    ):
+
+        user = UserRepository.get_by_id(
+            db,
+            user_id
+        )
+
+        if not user:
+            raise ValueError(
+                "User not found"
+            )
+
+        return user
+
+    @staticmethod
+    def update_user(
+        db: Session,
+        user_id: UUID,
+        payload: UpdateUserRequest
+    ):
+
+        user = UserRepository.get_by_id(
+            db,
+            user_id
+        )
+
+        if not user:
+            raise ValueError(
+                "User not found"
+            )
+
+        update_data = payload.model_dump(
+            exclude_unset=True
+        )
+
+        updated_user = UserRepository.update(
+            db,
+            user,
+            update_data
+        )
+
+        return updated_user
+
+    @staticmethod
+    def delete_user(
+        db: Session,
+        user_id: UUID
+    ):
+
+        user = UserRepository.get_by_id(
+            db,
+            user_id
+        )
+
+        if not user:
+            raise ValueError(
+                "User not found"
+            )
+
+        UserRepository.soft_delete(
+            db,
+            user
+        )
+
+        return {
+            "message": "User deleted successfully"
+        }

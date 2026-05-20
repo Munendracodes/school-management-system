@@ -56,17 +56,22 @@ def login(
         )
 
 
-@router.post("/reset-password")
+@router.post(
+    "/reset-password"
+)
 def reset_password(
-    payload: ResetPasswordRequest
+    payload: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
 
-    return {
-        "message": (
-            "Reset password API "
-            "will be implemented next"
-        )
-    }
+    return AuthService.reset_password(
+        db=db,
+        current_user=current_user,
+        payload=payload
+    )
 
 
 @router.get("/me")

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import UUID, select
 from sqlalchemy.orm import Session
 
 from app.modules.users.models.role_model import RoleModel
@@ -9,7 +9,7 @@ class RoleRepository:
     @staticmethod
     def get_by_id(
         db: Session,
-        role_id: str
+        role_id: UUID
     ) -> RoleModel | None:
 
         query = select(RoleModel).where(

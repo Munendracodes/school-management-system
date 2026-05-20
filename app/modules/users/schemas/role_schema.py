@@ -1,14 +1,18 @@
-from typing import Optional
+from uuid import UUID
+from datetime import datetime
 
 from pydantic import BaseModel
 
 
-class CreateRoleRequest(BaseModel):
-    name: str
-    description: Optional[str] = None
-
-
 class RoleResponse(BaseModel):
-    id: str
+    id: UUID
     name: str
-    description: Optional[str] = None
+    description: str | None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class RoleListResponse(BaseModel):
+    items: list[RoleResponse]

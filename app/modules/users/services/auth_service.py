@@ -1,20 +1,22 @@
 from sqlalchemy.orm import Session
 
+from app.modules.users.models.user_model import UserModel
 from app.modules.users.repositories.user_repository import (
     UserRepository,
 )
 from app.modules.users.schemas.auth_schema import (
     LoginRequest,
     LoginResponse,
+    ResetPasswordRequest,
     UserInfo,
 )
 from app.modules.users.utils.jwt_handler import (
     create_access_token,
 )
-from app.modules.users.utils.password_handler import (
-    verify_password,
-)
 
+from app.core.auth.password import (
+    PasswordService,
+)
 
 class AuthService:
 
@@ -34,7 +36,7 @@ class AuthService:
                 "Invalid mobile number or password"
             )
 
-        if not verify_password(
+        if not PasswordService.verify_password(
             payload.password,
             user.password_hash
         ):
@@ -64,3 +66,39 @@ class AuthService:
                 role=user.role.name
             )
         )
+    
+    @staticmethod
+    def reset_password(
+        db: Session,
+        current_user: UserModel,
+        payload: ResetPasswordRequest
+    ):
+
+        is_valid_password = PasswordService.verify_password(
+            payload.old_password,
+            current_user.password_hash
+        )
+
+        if not is_valid_password:
+            raise ValueError(
+                "Current password is incorrect"
+            )
+
+        hashed_password = PasswordService.hash_password(
+            payload.new_password
+        )
+
+        current_user.password_hash = (
+            hashed_password
+        )
+
+        current_user.is_first_login = False
+
+        db.commit()
+        db.refresh(current_user)
+
+        return {
+            "message": (
+                "Password reset successfully"
+            )
+        }

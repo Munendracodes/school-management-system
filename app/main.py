@@ -4,11 +4,12 @@ from app.core.exceptions.handlers import register_exception_handlers
 from app.modules.settings.router import router as settings_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from app.modules.users.routers.auth_router import router as users_router
+from app.modules.users.routers.auth_router import router as auth_router
 from app.modules.dashboard.routers.homepage_router import (
     router as homepage_router
 )
-
+from app.modules.users.routers.user_router import router as users_router
+from app.modules.users.routers.role_router import router as role_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -31,10 +32,12 @@ app.mount(
 
 register_exception_handlers(app)
 
-app.include_router(settings_router)
+app.include_router(settings_router, include_in_schema=False)
+app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(homepage_router)
+app.include_router(role_router)
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 def root():
     return {"message": "School Management System API"}
