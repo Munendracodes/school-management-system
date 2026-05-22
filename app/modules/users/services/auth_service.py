@@ -18,6 +18,10 @@ from app.core.auth.password import (
     PasswordService,
 )
 
+from app.modules.users.schemas.user_schema import (
+    UserResponse
+)
+
 class AuthService:
 
     @staticmethod
@@ -25,21 +29,28 @@ class AuthService:
         db: Session,
         payload: LoginRequest
     ) -> LoginResponse:
-
+        print("AuthService.login called with mobile_number:", payload.mobile_number, "and password:", payload.password)
         user = UserRepository.get_by_mobile_number(
             db,
             payload.mobile_number
         )
+
+        userdata_response = UserResponse.from_orm(user) if user else None
+        print("AuthService.login called with mobile_number:", payload.mobile_number, "found user:", userdata_response)
 
         if not user:
             raise ValueError(
                 "Invalid mobile number or password"
             )
 
+        print("payload password:", payload.password)
+        print("user password hash:", user.password_hash)
+
         if not PasswordService.verify_password(
             payload.password,
             user.password_hash
         ):
+            print("Password verification failed for mobile number:", payload.mobile_number)
             raise ValueError(
                 "Invalid mobile number or password"
             )

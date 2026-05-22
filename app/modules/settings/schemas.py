@@ -10,6 +10,8 @@ class SchoolSettingsBase(BaseModel):
 
     logo_url: str | None = None
 
+    tag_line: str | None = None
+
     primary_color: str | None = None
 
     secondary_color: str | None = None
@@ -34,6 +36,8 @@ class SchoolSettingsUpdate(BaseModel):
 
     logo_url: str | None = None
 
+    tag_line: str | None = None
+
     primary_color: str | None = None
 
     secondary_color: str | None = None
@@ -57,6 +61,8 @@ class SchoolSettingsResponse(
 
 class BootstrapResponse(BaseModel):
     school_name: str
+
+    tag_line: str | None = None
 
     logo_url: str | None = None
 

@@ -4,6 +4,9 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.modules.users.models.user_model import UserModel
+from app.modules.users.schemas.user_schema import (
+    UserResponse
+)
 
 
 class UserRepository:
@@ -42,8 +45,8 @@ class UserRepository:
         db: Session,
         mobile_number: str
     ) -> UserModel | None:
-
-        return (
+        
+        userData = (
             db.query(UserModel)
             .filter(
                 UserModel.mobile_number == mobile_number,
@@ -51,6 +54,9 @@ class UserRepository:
             )
             .first()
         )
+        userdata_response = UserResponse.from_orm(userData) if userData else None
+        print("UserRepository.get_by_mobile_number called with mobile_number:", mobile_number, "found user:", userdata_response)
+        return userData
 
     @staticmethod
     def get_by_email(

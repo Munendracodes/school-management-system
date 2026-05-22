@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from app.modules.users.utils.pin_generator import MPIN_REGEX
 
 
 class LoginRequest(BaseModel):
@@ -11,9 +12,14 @@ class LoginRequest(BaseModel):
 
     password: str = Field(
         ...,
+        pattern=MPIN_REGEX,
         min_length=4,
-        examples=["1234"]
+        max_length=4,
+        examples=["1234"],
+        description="4 digit MPIN code"
     )
+
+    
 
 
 class UserInfo(BaseModel):
@@ -33,10 +39,18 @@ class LoginResponse(BaseModel):
 class ResetPasswordRequest(BaseModel):
     old_password: str = Field(
         ...,
+        pattern=MPIN_REGEX,
         min_length=4,
+        max_length=4,
+        examples=["1234"],
+        description="4 digit MPIN code"
     )
 
     new_password: str = Field(
         ...,
-        min_length=4
+        pattern=MPIN_REGEX,
+        min_length=4,
+        max_length=4,
+        examples=["1234"],
+        description="4 digit MPIN code"
     )

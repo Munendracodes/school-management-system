@@ -5,6 +5,7 @@ from app.modules.settings.repository import (
 )
 
 from app.modules.settings.schemas import (
+    BootstrapResponse,
     SchoolSettingsCreate,
     SchoolSettingsUpdate,
 )
@@ -81,29 +82,16 @@ class SchoolSettingsService:
             raise ValueError(
                 "School settings not found"
             )
-
-        return {
-            "school_name":
-                settings.school_name,
-
-            "logo_url":
-                settings.logo_url,
-
-            "primary_color":
-                settings.primary_color,
-
-            "secondary_color":
-                settings.secondary_color,
-
-            "welcome_screen":
-                settings.welcome_screen,
-
-            "login_screen":
-                settings.login_screen,
-
-            "features_enabled":
-                settings.features_enabled,
-        }
+        
+        return BootstrapResponse(
+            school_name=settings.school_name,
+            tag_line=settings.tag_line,
+            logo_url=settings.logo_url,
+            primary_color=settings.primary_color,
+            secondary_color=settings.secondary_color,
+            welcome_screen=settings.welcome_screen,
+            login_screen=settings.login_screen,
+        )
     
     @staticmethod
     def delete_settings(

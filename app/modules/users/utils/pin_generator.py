@@ -1,5 +1,6 @@
 import secrets
 
+MPIN_REGEX = r"^\d{4}$"
 
 def generate_temporary_pin(length: int = 4) -> str:
     """

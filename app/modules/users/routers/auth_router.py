@@ -42,7 +42,7 @@ def login(
     payload: LoginRequest,
     db: Session = Depends(get_db)
 ):
-
+    print("Login attempt for mobile number:", payload.mobile_number, "with password:", payload.password)
     try:
         return AuthService.login(
             db,
