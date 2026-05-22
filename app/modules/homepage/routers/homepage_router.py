@@ -19,6 +19,10 @@ from app.modules.homepage.services.homepage_service import (
     HomepageService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
 router = APIRouter(
     prefix="/homepage",
     tags=["Homepage"],
@@ -39,17 +43,14 @@ def create_widget(
     )
 
 
-@router.get(
-    "",
-    response_model=list[HomepageWidgetResponseSchema],
-)
+@router.get("")
 def get_homepage(
-    role: str,
     db: Session = Depends(get_db),
+    current_user = Depends(get_current_user),
 ):
-    return HomepageService.get_homepage(
+    return HomepageService.get_dynamic_homepage(
         db,
-        role,
+        current_user,
     )
 
 

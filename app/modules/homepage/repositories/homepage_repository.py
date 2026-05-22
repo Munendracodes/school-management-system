@@ -99,3 +99,39 @@ class HomepageRepository:
         widget.is_deleted = True
 
         db.commit()
+
+    @staticmethod
+    def get_active_widgets_by_role(
+        db: Session,
+        role_name: str,
+    ):
+
+        query = select(HomepageWidget).where(
+            HomepageWidget.is_active == True,
+            HomepageWidget.is_deleted == False,
+        )
+
+        widgets = db.scalars(query).all()
+
+        filtered_widgets = []
+
+        for widget in widgets:
+
+            visibility_roles = (
+                widget.visibility_roles or []
+            )
+
+            if role_name in visibility_roles:
+                filtered_widgets.append({
+                    "id": str(widget.id),
+                    "title": widget.title,
+                    "widget_type": widget.widget_type,
+                    "sequence": widget.sequence,
+                    "config": widget.config_json,
+                })
+
+        filtered_widgets.sort(
+            key=lambda x: x["sequence"]
+        )
+
+        return filtered_widgets

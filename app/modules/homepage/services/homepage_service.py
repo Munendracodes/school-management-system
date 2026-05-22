@@ -7,6 +7,9 @@ from app.modules.homepage.repositories.homepage_repository import (
     HomepageRepository,
 )
 
+from app.modules.homepage.assemblers.homepage_assembler import (
+    HomepageAssembler,
+)
 
 class HomepageService:
 
@@ -83,3 +86,13 @@ class HomepageService:
         return {
             "message": "Widget deleted successfully",
         }
+    
+    @staticmethod
+    def get_dynamic_homepage(
+        db,
+        current_user,
+    ):
+        return HomepageAssembler.build(
+            db,
+            current_user,
+        )

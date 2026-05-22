@@ -21,6 +21,23 @@ from app.modules.teacher.models.teacher_section_mapping_model import (
     TeacherSectionMapping,
 )
 
+from sqlalchemy import (
+    select,
+    func,
+)
+
+from app.modules.attendance.models.attendance_model import (
+    Attendance,
+)
+
+from app.modules.student.models.student_model import (
+    Student,
+)
+
+from app.modules.parent.models.student_parent_mapping_model import (
+    StudentParentMapping,
+)
+
 
 class DashboardQueries:
 
@@ -106,6 +123,59 @@ class DashboardQueries:
             )
             .where(
                 TeacherSectionMapping.teacher_id == teacher_id,
+                Student.is_deleted == False,
+            )
+        )
+    
+    @staticmethod
+    def student_attendance_summary(
+        student_id,
+    ):
+
+        total_subquery = (
+            select(
+                func.count(Attendance.id)
+            )
+            .where(
+                Attendance.student_id == student_id,
+                Attendance.is_deleted == False,
+            )
+            .scalar_subquery()
+        )
+
+        present_subquery = (
+            select(
+                func.count(Attendance.id)
+            )
+            .where(
+                Attendance.student_id == student_id,
+                Attendance.status == "PRESENT",
+                Attendance.is_deleted == False,
+            )
+            .scalar_subquery()
+        )
+
+        return select(
+            total_subquery.label("total"),
+            present_subquery.label("present"),
+        )
+    
+    @staticmethod
+    def parent_children(
+        parent_id,
+    ):
+
+        return (
+            select(
+                Student.id,
+                Student.full_name,
+            )
+            .join(
+                StudentParentMapping,
+                Student.id == StudentParentMapping.student_id,
+            )
+            .where(
+                StudentParentMapping.parent_id == parent_id,
                 Student.is_deleted == False,
             )
         )

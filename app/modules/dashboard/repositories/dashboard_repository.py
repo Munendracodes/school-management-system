@@ -79,3 +79,33 @@ class DashboardRepository:
                 teacher_id,
             )
         )
+
+    @staticmethod
+    def get_student_attendance_summary(
+        db: Session,
+        student_id,
+    ):
+        return db.execute(
+            DashboardQueries.student_attendance_summary(
+                student_id,
+            )
+        ).mappings().first()
+
+    @staticmethod
+    def get_parent_children(
+        db: Session,
+        parent_id,
+    ):
+        result = db.execute(
+            DashboardQueries.parent_children(
+                parent_id,
+            )
+        ).mappings().all()
+
+        return [
+            {
+                "id": str(row["id"]),
+                "full_name": row["full_name"],
+            }
+            for row in result
+        ]
