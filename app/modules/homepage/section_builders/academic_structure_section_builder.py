@@ -28,6 +28,8 @@ class AcademicStructureSectionBuilder:
                     ),
 
                     "icon": "classroom",
+                    "icon_color": "#2457FF",
+                    "background_color": "#F5F7FF",
 
                     "redirect_url": (
                         "/classrooms"
@@ -46,6 +48,8 @@ class AcademicStructureSectionBuilder:
                     ),
 
                     "icon": "sections",
+                    "icon_color": "#FF4DA6",
+                    "background_color": "#FFF1F7",
 
                     "redirect_url": (
                         "/sections"
@@ -64,6 +68,8 @@ class AcademicStructureSectionBuilder:
                     ),
 
                     "icon": "subjects",
+                    "icon_color": "#FF8A00",
+                    "background_color": "#FFF8F1",
 
                     "redirect_url": (
                         "/subjects"
@@ -83,6 +89,8 @@ class AcademicStructureSectionBuilder:
                     ),
 
                     "icon": "timetable",
+                    "icon_color": "#7C4DFF",
+                    "background_color": "#F8F5FF",
 
                     "redirect_url": (
                         "/timetables"

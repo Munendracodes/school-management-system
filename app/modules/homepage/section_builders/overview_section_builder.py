@@ -26,8 +26,8 @@ class OverviewSectionBuilder:
                     ),
 
                     "icon": "students",
-
-                    "color": "#2563EB",
+                    "icon_color": "#2457FF",
+                    "background_color": "#F5F7FF"
                 },
 
                 {
@@ -41,8 +41,8 @@ class OverviewSectionBuilder:
                     ),
 
                     "icon": "teachers",
-
-                    "color": "#16A34A",
+                    "icon_color": "#FF4DA6",
+                    "background_color": "#FFF1F7"
                 },
             ],
         }

@@ -131,7 +131,7 @@ class DashboardService:
                 db,
                 teacher_id,
             )
-        )
+        ) or 0
 
         attendance_pending = (
             students_count > 0

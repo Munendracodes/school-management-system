@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from app.modules.dashboard.services.dashboard_service import (
     DashboardService,
 )
@@ -24,6 +22,12 @@ from app.modules.homepage.section_builders.student_operations_section_builder im
     StudentOperationsSectionBuilder,
 )
 
+from app.core.utils.datetime_utils import (
+    DateTimeUtils,
+)
+
+
+
 
 class AdminHomepageBuilder:
 
@@ -36,6 +40,18 @@ class AdminHomepageBuilder:
         dashboard = DashboardService.get_admin_dashboard(
             db,
         )
+
+        current_hour = DateTimeUtils.current_hour()
+        print(f"Current hour: {current_hour}")
+
+        if 6 <= current_hour < 12:
+            greeting = "Good Morning"
+
+        elif 12 <= current_hour < 18:
+            greeting = "Good Afternoon"
+
+        else:
+            greeting = "Good Evening"
 
         sections = [
             OverviewSectionBuilder.build(
@@ -61,17 +77,17 @@ class AdminHomepageBuilder:
                 "school_name": "Sunshine Public School",
                 "school_logo": "",
                 "screen_title": "Admin Dashboard",
-                "notification_count": 3,
+                "notification_count": 4,
             },
 
             hero_banner={
                 "title": (
-                    f"Good Morning, "
+                    f"{greeting}, "
                     f"{current_user.full_name} 👋"
                 ),
 
                 "subtitle": (
-                    datetime.now().strftime(
+                    DateTimeUtils.now().strftime(
                         "%A, %d %B %Y"
                     )
                 ),

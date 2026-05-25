@@ -21,6 +21,8 @@ class QuickActionsSectionBuilder:
                     "redirect_url": (
                         "/students/create"
                     ),
+                    "icon_color": "#2457FF",
+                    "background_color": "#F5F7FF",
                 },
 
                 {
@@ -31,6 +33,8 @@ class QuickActionsSectionBuilder:
                     "redirect_url": (
                         "/attendance"
                     ),
+                    "icon_color": "#FF4DA6",
+                    "background_color": "#FFF1F7",  
                 },
             ],
         }
