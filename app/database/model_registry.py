@@ -21,3 +21,5 @@ from app.modules.attendance.models.attendance_model import Attendance
 from app.modules.homepage.models.homepage_widget_model import (
     HomepageWidget,
 )
+from app.modules.homepage.models.homepage_section_model import HomepageSection
+from app.modules.homepage.models.homepage_item_model import HomepageItem

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.modules.teacher.models.teacher_model import Teacher
@@ -106,3 +106,28 @@ class TeacherRepository:
         db.refresh(mapping)
 
         return mapping
+    
+    @staticmethod
+    def get_count(
+        db: Session,
+    ):
+
+        query = (
+            select(
+                func.count(
+                    Teacher.id
+                )
+            )
+            .where(
+                Teacher.is_deleted.is_(
+                    False
+                ),
+                Teacher.is_active.is_(
+                    True
+                )
+            )
+        )
+
+        return db.scalar(
+            query
+        ) or 0

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.modules.student.models.student_model import Student
@@ -76,3 +76,28 @@ class StudentRepository:
         student.is_deleted = True
 
         db.commit()
+    
+    @staticmethod
+    def get_count(
+        db,
+    ):
+
+        query = (
+            select(
+                func.count(
+                    Student.id
+                )
+            )
+            .where(
+                Student.is_deleted.is_(
+                    False
+                ),
+                Student.is_active.is_(
+                    True
+                )
+            )
+        )
+
+        return db.scalar(
+            query
+        ) or 0

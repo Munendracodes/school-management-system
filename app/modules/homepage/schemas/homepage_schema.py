@@ -3,72 +3,32 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from app.modules.homepage.enums.widget_type_enum import (
-    WidgetTypeEnum,
-)
 
-
-class HomepageWidgetCreateSchema(BaseModel):
-
-    title: str
-
-    widget_type: WidgetTypeEnum
-
-    subtitle: Optional[str] = None
-
-    image_url: Optional[str] = None
-
-    redirect_url: Optional[str] = None
-
-    sequence: int = 1
-
-    visibility_roles: list[str]
-
-    config_json: Optional[dict] = None
-
-    is_active: bool = True
-
-
-class HomepageWidgetUpdateSchema(BaseModel):
-
-    title: Optional[str] = None
-
-    subtitle: Optional[str] = None
-
-    image_url: Optional[str] = None
-
-    redirect_url: Optional[str] = None
-
-    sequence: Optional[int] = None
-
-    visibility_roles: Optional[list[str]] = None
-
-    config_json: Optional[dict] = None
-
-    is_active: Optional[bool] = None
-
-
-class HomepageWidgetResponseSchema(BaseModel):
+class HomepageItemResponse(BaseModel):
 
     id: UUID
-
     title: str
-
-    widget_type: str
-
     subtitle: Optional[str]
-
+    item_type: str
+    icon: Optional[str]
     image_url: Optional[str]
-
     redirect_url: Optional[str]
+    config_json: dict
 
-    sequence: int
+    class Config:
+        from_attributes = True
 
-    visibility_roles: list[str]
 
-    config_json: Optional[dict]
+class HomepageSectionResponse(BaseModel):
 
-    is_active: bool
+    id: UUID
+    title: str
+    description: Optional[str]
+    section_type: str
+    display_order: int
+    config_json: dict
+
+    items: list[HomepageItemResponse]
 
     class Config:
         from_attributes = True
