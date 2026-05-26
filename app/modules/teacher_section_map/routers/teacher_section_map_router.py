@@ -18,6 +18,14 @@ from app.modules.teacher_section_map.services.teacher_section_map_service import
     TeacherSectionMapService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/teacher-section-mappings",
     tags=["🔗 Mapping Engine"]
@@ -34,6 +42,7 @@ def create_mapping(
     db: Session = Depends(
         get_db
     ),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return (
@@ -49,6 +58,7 @@ def get_mappings(
     db: Session = Depends(
         get_db
     ),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return (

@@ -21,6 +21,14 @@ from app.modules.parent.services.parent_service import (
     ParentService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/parents",
     tags=["👨‍👩‍👧 Parent Management"]
@@ -34,6 +42,7 @@ router = APIRouter(
 def create_parent(
     payload: ParentCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.create_parent(
         db,
@@ -47,6 +56,7 @@ def create_parent(
 )
 def get_parents(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.get_parents(db)
 
@@ -58,6 +68,7 @@ def get_parents(
 def get_parent_by_id(
     parent_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.get_parent_by_id(
         db,
@@ -73,6 +84,7 @@ def update_parent(
     parent_id: UUID,
     payload: ParentUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.update_parent(
         db,
@@ -85,6 +97,7 @@ def update_parent(
 def delete_parent(
     parent_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.delete_parent(
         db,
@@ -99,6 +112,7 @@ def delete_parent(
 def map_student_parent(
     payload: StudentParentMappingCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ParentService.map_student_parent(
         db,

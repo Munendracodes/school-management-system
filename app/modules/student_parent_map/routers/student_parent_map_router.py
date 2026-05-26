@@ -16,6 +16,14 @@ from app.modules.student_parent_map.services.student_parent_map_service import (
     StudentParentMapService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/student-parent-mappings",
     tags=["🔗 Mapping Engine"]
@@ -29,6 +37,7 @@ router = APIRouter(
 def create_mapping(
     payload: StudentParentMapCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return StudentParentMapService.create_mapping(

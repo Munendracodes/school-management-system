@@ -19,6 +19,14 @@ from app.modules.section.services.section_service import (
     SectionService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/sections",
     tags=["🏫 Academic Structure"]
@@ -32,6 +40,7 @@ router = APIRouter(
 def create_section(
     payload: SectionCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return SectionService.create_section(
         db,
@@ -45,6 +54,7 @@ def create_section(
 )
 def get_sections(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return SectionService.get_sections(db)
 
@@ -56,6 +66,7 @@ def get_sections(
 def get_section_by_id(
     section_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return SectionService.get_section_by_id(
         db,
@@ -71,6 +82,7 @@ def update_section(
     section_id: UUID,
     payload: SectionUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return SectionService.update_section(
         db,
@@ -83,6 +95,7 @@ def update_section(
 def delete_section(
     section_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return SectionService.delete_section(
         db,

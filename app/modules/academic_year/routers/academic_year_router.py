@@ -12,6 +12,14 @@ from app.modules.academic_year.services.academic_year_service import (
     AcademicYearService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/academic-years",
     tags=["🏫 Academic Structure"]
@@ -25,6 +33,7 @@ router = APIRouter(
 def create_academic_year(
     payload: AcademicYearCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AcademicYearService.create_academic_year(
         db=db,
@@ -38,6 +47,7 @@ def create_academic_year(
 )
 def get_all_academic_years(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AcademicYearService.get_all_academic_years(
         db=db,

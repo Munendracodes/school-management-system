@@ -12,6 +12,14 @@ from app.modules.classroom.services.classroom_service import (
     ClassRoomService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/classrooms",
     tags=["🏫 Academic Structure"]
@@ -25,6 +33,7 @@ router = APIRouter(
 def create_classroom(
     payload: ClassRoomCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ClassRoomService.create_classroom(
         db=db,
@@ -38,6 +47,7 @@ def create_classroom(
 )
 def get_all_classrooms(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return ClassRoomService.get_all_classrooms(
         db=db,

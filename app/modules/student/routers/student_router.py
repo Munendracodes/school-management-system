@@ -19,6 +19,14 @@ from app.modules.student.services.student_service import (
     StudentService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/students",
     tags=["🎓 Student Management"]
@@ -32,6 +40,9 @@ router = APIRouter(
 def create_student(
     payload: StudentCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
     return StudentService.create_student(
         db,
@@ -45,6 +56,9 @@ def create_student(
 )
 def get_students(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
     return StudentService.get_students(db)
 
@@ -56,6 +70,9 @@ def get_students(
 def get_student_by_id(
     student_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
     return StudentService.get_student_by_id(
         db,
@@ -71,6 +88,9 @@ def update_student(
     student_id: UUID,
     payload: StudentUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
     return StudentService.update_student(
         db,
@@ -83,6 +103,9 @@ def update_student(
 def delete_student(
     student_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    )
 ):
     return StudentService.delete_student(
         db,

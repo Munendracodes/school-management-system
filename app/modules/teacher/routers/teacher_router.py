@@ -21,6 +21,14 @@ from app.modules.teacher.services.teacher_service import (
     TeacherService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/teachers",
     tags=["👨‍🏫 Teacher Management"]
@@ -34,6 +42,7 @@ router = APIRouter(
 def create_teacher(
     payload: TeacherCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.create_teacher(
         db,
@@ -47,6 +56,7 @@ def create_teacher(
 )
 def get_teachers(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.get_teachers(db)
 
@@ -58,6 +68,7 @@ def get_teachers(
 def get_teacher_by_id(
     teacher_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.get_teacher_by_id(
         db,
@@ -73,6 +84,7 @@ def update_teacher(
     teacher_id: UUID,
     payload: TeacherUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.update_teacher(
         db,
@@ -85,6 +97,7 @@ def update_teacher(
 def delete_teacher(
     teacher_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.delete_teacher(
         db,
@@ -99,6 +112,7 @@ def delete_teacher(
 def map_teacher_section(
     payload: TeacherSectionMappingCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return TeacherService.map_teacher_section(
         db,

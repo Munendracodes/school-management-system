@@ -19,6 +19,14 @@ from app.modules.attendance.services.attendance_service import (
     AttendanceService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/attendance",
     tags=["📝 Attendance"]
@@ -32,6 +40,7 @@ router = APIRouter(
 def create_attendance(
     payload: AttendanceCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AttendanceService.create_attendance(
         db,
@@ -45,6 +54,7 @@ def create_attendance(
 )
 def get_attendance(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AttendanceService.get_attendance(db)
 
@@ -56,6 +66,7 @@ def get_attendance(
 def get_attendance_by_student(
     student_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AttendanceService.get_attendance_by_student(
         db,
@@ -70,11 +81,13 @@ def get_attendance_by_student(
 def get_attendance_by_section(
     section_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
-    return AttendanceService.get_attendance_by_section(
-        db,
-        section_id,
-    )
+    # return AttendanceService.get_attendance_by_section(
+    #     db,
+    #     section_id,
+    # )
+    return {}
 
 
 @router.put(
@@ -85,6 +98,7 @@ def update_attendance(
     attendance_id: UUID,
     payload: AttendanceUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AttendanceService.update_attendance(
         db,
@@ -97,6 +111,7 @@ def update_attendance(
 def delete_attendance(
     attendance_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return AttendanceService.delete_attendance(
         db,

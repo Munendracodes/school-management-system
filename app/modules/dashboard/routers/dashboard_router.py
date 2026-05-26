@@ -19,6 +19,14 @@ from app.modules.dashboard.services.dashboard_service import (
     DashboardService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/dashboard",
     tags=["📊 Dashboard"]
@@ -31,6 +39,7 @@ router = APIRouter(
 )
 def get_admin_summary(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return DashboardService.get_admin_summary(
         db,
@@ -43,6 +52,7 @@ def get_admin_summary(
 )
 def get_attendance_summary(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return DashboardService.get_attendance_summary(
         db,
@@ -56,6 +66,7 @@ def get_attendance_summary(
 def get_teacher_dashboard(
     teacher_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return DashboardService.get_teacher_dashboard(
         db,

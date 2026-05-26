@@ -19,6 +19,14 @@ from app.modules.settings.service import (
     SchoolSettingsService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/settings",
     tags=["🎨 Homepage CMS"]
@@ -31,6 +39,7 @@ router = APIRouter(
 )
 def get_settings(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     settings = (
         SchoolSettingsService
@@ -53,6 +62,7 @@ def get_settings(
 def create_settings(
     payload: SchoolSettingsCreate,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
         return (
@@ -77,6 +87,7 @@ def create_settings(
 def update_settings(
     payload: SchoolSettingsUpdate,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
         return (
@@ -98,6 +109,7 @@ def update_settings(
 )
 def delete_settings(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     try:
         SchoolSettingsService.delete_settings(

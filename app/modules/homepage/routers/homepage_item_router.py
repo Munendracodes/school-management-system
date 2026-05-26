@@ -21,6 +21,14 @@ from app.modules.homepage.services.homepage_item_service import (
     HomepageItemService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 
 router = APIRouter(
     prefix="/homepage-items",
@@ -35,6 +43,7 @@ router = APIRouter(
 def create_item(
     payload: HomepageItemCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return HomepageItemService.create(
@@ -51,6 +60,7 @@ def create_item(
 )
 def get_items(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return HomepageItemService.get_all(
@@ -66,6 +76,7 @@ def update_item(
     item_id: UUID,
     payload: HomepageItemUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return HomepageItemService.update(
@@ -77,10 +88,12 @@ def update_item(
 
 @router.delete(
     "/{item_id}",
+    response_model=HomepageItemResponseSchema,
 )
 def delete_item(
     item_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
 
     return HomepageItemService.delete(

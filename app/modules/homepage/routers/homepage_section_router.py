@@ -19,6 +19,14 @@ from app.modules.homepage.services.homepage_section_service import (
     HomepageSectionService,
 )
 
+from app.modules.users.dependencies.current_user import (
+    get_current_user,
+)
+
+from app.modules.users.models.user_model import (
+    UserModel,
+)
+
 router = APIRouter(
     prefix="/homepage-sections",
     tags=["🎨 Homepage CMS"]
@@ -32,6 +40,7 @@ router = APIRouter(
 def create_section(
     payload: HomepageSectionCreateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return HomepageSectionService.create(
         db,
@@ -47,6 +56,7 @@ def create_section(
 )
 def get_sections(
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return HomepageSectionService.get_all(
         db,
@@ -61,6 +71,7 @@ def update_section(
     section_id: UUID,
     payload: HomepageSectionUpdateSchema,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return HomepageSectionService.update(
         db,
@@ -70,11 +81,13 @@ def update_section(
 
 
 @router.delete(
-    "/{section_id}"
+    "/{section_id}",
+    response_model=HomepageSectionResponseSchema,
 )
 def delete_section(
     section_id: UUID,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
 ):
     return HomepageSectionService.delete(
         db,
