@@ -21,7 +21,7 @@ from app.modules.student.services.student_service import (
 
 router = APIRouter(
     prefix="/students",
-    tags=["Students"],
+    tags=["🎓 Student Management"]
 )
 
 

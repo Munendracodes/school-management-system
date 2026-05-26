@@ -20,7 +20,7 @@ from app.modules.teacher_section_map.services.teacher_section_map_service import
 
 router = APIRouter(
     prefix="/teacher-section-mappings",
-    tags=["Teacher Section Mapping"],
+    tags=["🔗 Mapping Engine"]
 )
 
 

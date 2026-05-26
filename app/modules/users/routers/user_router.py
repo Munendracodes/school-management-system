@@ -36,7 +36,7 @@ from app.modules.users.constants.role_constants import (
 
 router = APIRouter(
     prefix="/users",
-    tags=["Users"]
+    tags=["👤 User Management"]
 )
 
 

@@ -13,8 +13,8 @@ from app.modules.classroom.services.classroom_service import (
 )
 
 router = APIRouter(
-    prefix="/classes",
-    tags=["Classes"],
+    prefix="/classrooms",
+    tags=["🏫 Academic Structure"]
 )
 
 

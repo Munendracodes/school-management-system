@@ -21,7 +21,7 @@ from app.modules.dashboard.services.dashboard_service import (
 
 router = APIRouter(
     prefix="/dashboard",
-    tags=["Dashboard"],
+    tags=["📊 Dashboard"]
 )
 
 

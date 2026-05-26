@@ -23,7 +23,7 @@ from app.modules.parent.services.parent_service import (
 
 router = APIRouter(
     prefix="/parents",
-    tags=["Parents"],
+    tags=["👨‍👩‍👧 Parent Management"]
 )
 
 

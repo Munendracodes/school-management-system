@@ -23,8 +23,8 @@ from app.modules.homepage.services.homepage_item_service import (
 
 
 router = APIRouter(
-    prefix="/homepage/items",
-    tags=["Homepage Items"],
+    prefix="/homepage-items",
+    tags=["🎨 Homepage CMS"]
 )
 
 

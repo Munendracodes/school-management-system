@@ -17,7 +17,7 @@ from app.modules.users.dependencies.current_user import (
 
 router = APIRouter(
     prefix="/homepage",
-    tags=["Homepage"],
+    tags=["🏠 Homepage Engine"]
 )
 
 

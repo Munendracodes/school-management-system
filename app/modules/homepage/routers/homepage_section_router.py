@@ -20,8 +20,8 @@ from app.modules.homepage.services.homepage_section_service import (
 )
 
 router = APIRouter(
-    prefix="/homepage/sections",
-    tags=["Homepage Sections"],
+    prefix="/homepage-sections",
+    tags=["🎨 Homepage CMS"]
 )
 
 

@@ -14,7 +14,7 @@ from app.modules.academic_year.services.academic_year_service import (
 
 router = APIRouter(
     prefix="/academic-years",
-    tags=["Academic Years"],
+    tags=["🏫 Academic Structure"]
 )
 
 

@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.openapi.docs import get_redoc_html
+from fastapi.openapi.utils import get_openapi
 
 from app.core.config.settings import settings
 from app.core.exceptions.handlers import (
@@ -63,6 +65,10 @@ from app.modules.student_parent_map.routers.student_parent_map_router import (
     router as student_parent_mapping_router,
 )
 
+from app.modules.teacher_section_map.routers.teacher_section_map_router import (
+    router as teacher_section_mapping_router,
+)
+
 # ==========================
 # OPERATIONAL MODULES
 # ==========================
@@ -83,10 +89,6 @@ from app.modules.homepage.routers.homepage_router import (
     router as homepage_router,
 )
 
-# ==========================
-# HOMEPAGE CMS MODULES
-# ==========================
-
 from app.modules.homepage.routers.homepage_section_router import (
     router as homepage_section_router,
 )
@@ -95,20 +97,167 @@ from app.modules.homepage.routers.homepage_item_router import (
     router as homepage_item_router,
 )
 
-from app.modules.teacher_section_map.routers.teacher_section_map_router import (
-    router as teacher_section_mapping_router,
-)
 
+# ====================================================
+# API TAGS
+# ====================================================
+
+tags_metadata = [
+
+    {
+        "name": "🔐 Authentication",
+        "description": "Login, logout, JWT and token APIs"
+    },
+
+    {
+        "name": "👤 User Management",
+        "description": "Users and role management"
+    },
+
+    {
+        "name": "⚙️ School Settings",
+        "description": "School configuration APIs"
+    },
+
+    {
+        "name": "🏫 Academic Structure",
+        "description": """
+Academic hierarchy:
+
+• Academic Year  
+• Classroom  
+• Section
+"""
+    },
+
+    {
+        "name": "🎓 Student Management",
+        "description": """
+Student operations:
+
+• Student CRUD
+• Parent mappings
+"""
+    },
+
+    {
+        "name": "👨‍👩‍👧 Parent Management",
+        "description": "Parent operations"
+    },
+
+    {
+        "name": "👨‍🏫 Teacher Management",
+        "description": "Teacher operations"
+    },
+
+    {
+        "name": "🔗 Mapping Engine",
+        "description": """
+Relationship APIs:
+
+• Student Parent Mapping
+• Teacher Section Mapping
+"""
+    },
+
+    {
+        "name": "📝 Attendance",
+        "description": "Attendance APIs"
+    },
+
+    {
+        "name": "📊 Dashboard",
+        "description": "Dashboard analytics"
+    },
+
+    {
+        "name": "🏠 Homepage Engine",
+        "description": "Homepage rendering APIs"
+    },
+
+    {
+        "name": "🎨 Homepage CMS",
+        "description": "Homepage configuration APIs"
+    }
+
+]
+
+
+# ====================================================
+# FASTAPI APP
+# ====================================================
 
 app = FastAPI(
-    title=settings.APP_NAME,
+
+    title="🏫 School Management System API",
+
     version=settings.APP_VERSION,
+
+    description="Comprehensive API for managing school operations, including students, teachers, attendance, and more.",
+
+    openapi_tags=tags_metadata,
+
+    contact={
+        "name": "School ERP Team",
+        "email": "support@schoolerp.com",
+    },
+
+    swagger_ui_parameters={
+
+        "deepLinking": True,
+        "displayRequestDuration": True,
+        "docExpansion": "none",
+        "defaultModelsExpandDepth": -1,
+        "filter": False,
+        "syntaxHighlight.theme": "obsidian",
+    },
+
 )
 
 
-# ==========================
+# ====================================================
+# STATIC FILES
+# ====================================================
+
+app.mount(
+    "/static",
+    StaticFiles(directory="app/static"),
+    name="static",
+)
+
+
+# ====================================================
+# CUSTOM OPENAPI
+# ====================================================
+
+def custom_openapi():
+
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+
+    # optional logo
+    openapi_schema["info"]["x-logo"] = {
+        "url": "/static/logo.png"
+    }
+
+    app.openapi_schema = openapi_schema
+
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
+
+# ====================================================
 # CORS
-# ==========================
+# ====================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -119,111 +268,72 @@ app.add_middleware(
 )
 
 
-# ==========================
-# STATIC FILES
-# ==========================
-
-app.mount(
-    "/static",
-    StaticFiles(
-        directory="app/static"
-    ),
-    name="static",
-)
-
-
-# ==========================
+# ====================================================
 # EXCEPTION HANDLERS
-# ==========================
+# ====================================================
 
-register_exception_handlers(
-    app
-)
+register_exception_handlers(app)
 
 
-# ==========================
+# ====================================================
 # ROUTERS
-# ==========================
+# ====================================================
 
-# settings
-app.include_router(
-    settings_router
+app.include_router(settings_router)
+
+app.include_router(auth_router)
+
+app.include_router(users_router)
+
+app.include_router(role_router)
+
+app.include_router(academic_year_router)
+
+app.include_router(classroom_router)
+
+app.include_router(section_router)
+
+app.include_router(student_router)
+
+app.include_router(parent_router)
+
+app.include_router(teacher_router)
+
+app.include_router(student_parent_mapping_router)
+
+app.include_router(teacher_section_mapping_router)
+
+app.include_router(attendance_router)
+
+app.include_router(dashboard_router)
+
+app.include_router(homepage_router)
+
+app.include_router(homepage_section_router)
+
+app.include_router(homepage_item_router)
+
+
+# ====================================================
+# CUSTOM REDOC
+# ====================================================
+
+@app.get(
+    "/redoc",
+    include_in_schema=False,
 )
+async def custom_redoc():
 
-# auth
-app.include_router(
-    auth_router
-)
-
-app.include_router(
-    users_router
-)
-
-app.include_router(
-    role_router
-)
-
-# academic hierarchy
-app.include_router(
-    academic_year_router
-)
-
-app.include_router(
-    classroom_router
-)
-
-app.include_router(
-    section_router
-)
-
-app.include_router(
-    student_router
-)
-
-app.include_router(
-    parent_router
-)
-
-app.include_router(
-    teacher_router
-)
-
-# operational
-app.include_router(
-    attendance_router
-)
-
-# dashboard
-app.include_router(
-    dashboard_router
-)
-
-# homepage rendering API
-app.include_router(
-    homepage_router
-)
-
-# homepage CMS APIs
-app.include_router(
-    homepage_section_router
-)
-
-app.include_router(
-    homepage_item_router
-)
-
-app.include_router(
-    student_parent_mapping_router
-)
-
-app.include_router(
-    teacher_section_mapping_router
-)
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title="School ERP Documentation",
+        with_google_fonts=True,
+    )
 
 
-# ==========================
-# ROOT HEALTH CHECK
-# ==========================
+# ====================================================
+# ROOT
+# ====================================================
 
 @app.get(
     "/",
@@ -232,6 +342,5 @@ app.include_router(
 def root():
 
     return {
-        "message":
-        "School Management System API"
+        "message": "School Management System API 🚀"
     }

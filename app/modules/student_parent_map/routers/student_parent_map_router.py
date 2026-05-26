@@ -18,7 +18,7 @@ from app.modules.student_parent_map.services.student_parent_map_service import (
 
 router = APIRouter(
     prefix="/student-parent-mappings",
-    tags=["Student Parent Mapping"],
+    tags=["🔗 Mapping Engine"]
 )
 
 

@@ -21,7 +21,7 @@ from app.modules.settings.service import (
 
 router = APIRouter(
     prefix="/settings",
-    tags=["Settings"],
+    tags=["🎨 Homepage CMS"]
 )
 
 

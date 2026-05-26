@@ -30,7 +30,7 @@ from app.modules.users.services.auth_service import (
 
 router = APIRouter(
     prefix="/auth",
-    tags=["Authentication"]
+    tags=["🔐 Authentication"]
 )
 
 

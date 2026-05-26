@@ -24,7 +24,7 @@ from app.modules.users.dependencies.current_user import (
 
 router = APIRouter(
     prefix="/roles",
-    tags=["Roles"]
+    tags=["👤 User Management"]
 )
 
 

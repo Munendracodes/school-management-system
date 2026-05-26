@@ -21,7 +21,7 @@ from app.modules.attendance.services.attendance_service import (
 
 router = APIRouter(
     prefix="/attendance",
-    tags=["Attendance"],
+    tags=["📝 Attendance"]
 )
 
 

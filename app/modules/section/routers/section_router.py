@@ -21,7 +21,7 @@ from app.modules.section.services.section_service import (
 
 router = APIRouter(
     prefix="/sections",
-    tags=["Sections"],
+    tags=["🏫 Academic Structure"]
 )
 
 

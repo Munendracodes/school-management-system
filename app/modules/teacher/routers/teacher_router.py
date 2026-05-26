@@ -23,7 +23,7 @@ from app.modules.teacher.services.teacher_service import (
 
 router = APIRouter(
     prefix="/teachers",
-    tags=["Teachers"],
+    tags=["👨‍🏫 Teacher Management"]
 )
 
 
