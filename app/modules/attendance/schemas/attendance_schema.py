@@ -1,14 +1,13 @@
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AttendanceCreateSchema(BaseModel):
 
     student_id: UUID
-    section_id: UUID
     teacher_id: UUID
     attendance_date: date
     status: str
@@ -25,11 +24,15 @@ class AttendanceResponseSchema(BaseModel):
 
     id: UUID
     student_id: UUID
-    section_id: UUID
     teacher_id: UUID
+
     attendance_date: date
     status: str
     remarks: Optional[str]
 
-    class Config:
-        from_attributes = True
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

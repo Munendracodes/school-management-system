@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from sqlalchemy import (
     String,
     ForeignKey,
+    UniqueConstraint,
 )
 
 from sqlalchemy.orm import (
@@ -12,9 +15,17 @@ from sqlalchemy.orm import (
 from app.database.base import BaseModel
 
 
-class StudentParentMapping(BaseModel):
+class StudentParentMap(BaseModel):
 
     __tablename__ = "student_parent_mappings"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "student_id",
+            "parent_id",
+            name="uq_student_parent"
+        ),
+    )
 
     student_id: Mapped[str] = mapped_column(
         ForeignKey("students.id"),
@@ -27,13 +38,16 @@ class StudentParentMapping(BaseModel):
     )
 
     relationship_type: Mapped[str] = mapped_column(
-        String(50),
+        String(30),
         nullable=False,
     )
 
-    student = relationship("Student")
+    student = relationship(
+        "Student",
+        back_populates="parent_mappings",
+    )
 
     parent = relationship(
         "Parent",
-        back_populates="students",
+        back_populates="student_mappings",
     )

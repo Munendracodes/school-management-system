@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.modules.classroom.models.classroom_model import ClassRoom
+from app.modules.classroom.models.classroom_model import Classroom as ClassRoom
 
 
 class ClassRoomRepository:

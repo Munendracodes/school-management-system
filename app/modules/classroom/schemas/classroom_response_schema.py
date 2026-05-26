@@ -1,16 +1,17 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ClassRoomResponseSchema(BaseModel):
-    id: UUID
-    name: str
-    display_order: int
-    academic_year_id: UUID
-    is_active: bool
-    created_at: datetime
 
-    class Config:
-        from_attributes = True
+    id: UUID
+    academic_year_id: UUID
+    name: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

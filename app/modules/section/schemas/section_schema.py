@@ -1,23 +1,20 @@
 from uuid import UUID
 from typing import Optional
+from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SectionCreateSchema(BaseModel):
 
     name: str
     classroom_id: UUID
-    capacity: int = 40
-    display_order: int = 1
 
 
 class SectionUpdateSchema(BaseModel):
 
     name: Optional[str] = None
-    capacity: Optional[int] = None
-    display_order: Optional[int] = None
-    is_active: Optional[bool] = None
+    classroom_id: Optional[UUID] = None
 
 
 class SectionResponseSchema(BaseModel):
@@ -25,9 +22,9 @@ class SectionResponseSchema(BaseModel):
     id: UUID
     name: str
     classroom_id: UUID
-    capacity: int
-    display_order: int
-    is_active: bool
+    created_at: datetime
+    updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )

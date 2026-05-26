@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 
 class AcademicYearUpdateSchema(BaseModel):
+
     name: Optional[str] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None

@@ -9,10 +9,6 @@ from app.modules.parent.repositories.parent_repository import (
     ParentRepository,
 )
 
-from app.modules.student.repositories.student_repository import (
-    StudentRepository,
-)
-
 
 class ParentService:
 
@@ -21,16 +17,6 @@ class ParentService:
         db: Session,
         payload,
     ):
-        existing_parent = ParentRepository.get_by_mobile_number(
-            db,
-            payload.mobile_number,
-        )
-
-        if existing_parent:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Mobile number already exists",
-            )
 
         return ParentRepository.create(
             db,
@@ -41,25 +27,112 @@ class ParentService:
     def get_parents(
         db: Session,
     ):
-        return ParentRepository.get_all(db)
+
+        parents = ParentRepository.get_all(
+            db
+        )
+
+        result = []
+
+        for parent in parents:
+
+            children = []
+
+            for mapping in parent.student_mappings:
+
+                student = mapping.student
+
+                children.append(
+                    {
+                        "id": student.id,
+                        "full_name": student.full_name,
+
+                        "section": {
+                            "id": student.section.id,
+                            "name": student.section.name,
+                        },
+
+                        "classroom": {
+                            "id": student.section.classroom.id,
+                            "name": student.section.classroom.name,
+                        },
+
+                        "academic_year": {
+                            "id": student.section.classroom.academic_year.id,
+                            "name": student.section.classroom.academic_year.name,
+                        },
+
+                        "relationship_type": mapping.relationship_type,
+                    }
+                )
+
+            result.append(
+                {
+                    "id": parent.id,
+                    "full_name": parent.full_name,
+                    "mobile_number": parent.mobile_number,
+                    "email": parent.email,
+                    "children": children,
+                }
+            )
+
+        return result
 
     @staticmethod
     def get_parent_by_id(
         db: Session,
         parent_id,
     ):
+
         parent = ParentRepository.get_by_id(
             db,
             parent_id,
         )
 
         if not parent:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Parent not found",
             )
 
-        return parent
+        children = []
+
+        for mapping in parent.student_mappings:
+
+            student = mapping.student
+
+            children.append(
+                {
+                    "id": student.id,
+                    "full_name": student.full_name,
+
+                    "section": {
+                        "id": student.section.id,
+                        "name": student.section.name,
+                    },
+
+                    "classroom": {
+                        "id": student.section.classroom.id,
+                        "name": student.section.classroom.name,
+                    },
+
+                    "academic_year": {
+                        "id": student.section.classroom.academic_year.id,
+                        "name": student.section.classroom.academic_year.name,
+                    },
+
+                    "relationship_type": mapping.relationship_type,
+                }
+            )
+
+        return {
+            "id": parent.id,
+            "full_name": parent.full_name,
+            "mobile_number": parent.mobile_number,
+            "email": parent.email,
+            "children": children,
+        }
 
     @staticmethod
     def update_parent(
@@ -67,12 +140,14 @@ class ParentService:
         parent_id,
         payload,
     ):
+
         parent = ParentRepository.get_by_id(
             db,
             parent_id,
         )
 
         if not parent:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Parent not found",
@@ -81,7 +156,9 @@ class ParentService:
         return ParentRepository.update(
             db,
             parent,
-            payload.model_dump(exclude_unset=True),
+            payload.model_dump(
+                exclude_unset=True
+            ),
         )
 
     @staticmethod
@@ -89,12 +166,14 @@ class ParentService:
         db: Session,
         parent_id,
     ):
+
         parent = ParentRepository.get_by_id(
             db,
             parent_id,
         )
 
         if not parent:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Parent not found",
@@ -106,37 +185,5 @@ class ParentService:
         )
 
         return {
-            "message": "Parent deleted successfully",
+            "message": "Parent deleted successfully"
         }
-
-    @staticmethod
-    def map_student_parent(
-        db: Session,
-        payload,
-    ):
-        student = StudentRepository.get_by_id(
-            db,
-            payload.student_id,
-        )
-
-        if not student:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Student not found",
-            )
-
-        parent = ParentRepository.get_by_id(
-            db,
-            payload.parent_id,
-        )
-
-        if not parent:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Parent not found",
-            )
-
-        return ParentRepository.create_student_parent_mapping(
-            db,
-            payload.model_dump(),
-        )

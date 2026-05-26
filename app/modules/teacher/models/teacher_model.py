@@ -1,10 +1,9 @@
-from datetime import date
+from __future__ import annotations
+
+from typing import List
 
 from sqlalchemy import (
     String,
-    Boolean,
-    Integer,
-    Date,
 )
 
 from sqlalchemy.orm import (
@@ -14,65 +13,38 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import BaseModel
+from app.modules.attendance.models.attendance_model import Attendance
+from app.modules.teacher_section_map.models.teacher_section_map_model import TeacherSectionMap
 
 
 class Teacher(BaseModel):
 
     __tablename__ = "teachers"
 
-    employee_id: Mapped[str] = mapped_column(
-        String(50),
-        unique=True,
-        nullable=False,
-    )
-
     full_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=False,
-    )
-
-    gender: Mapped[str] = mapped_column(
-        String(20),
+        String(100),
         nullable=False,
     )
 
     mobile_number: Mapped[str] = mapped_column(
-        String(20),
+        String(15),
         unique=True,
         nullable=False,
     )
 
     email: Mapped[str] = mapped_column(
-        String(150),
+        String(100),
         nullable=True,
     )
 
-    qualification: Mapped[str] = mapped_column(
-        String(200),
-        nullable=True,
-    )
-
-    experience_years: Mapped[int] = mapped_column(
-        Integer,
-        default=0,
-    )
-
-    joining_date: Mapped[date] = mapped_column(
-        Date,
-        nullable=False,
-    )
-
-    is_class_teacher: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-    )
-
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
-    )
-
-    sections = relationship(
-        "TeacherSectionMapping",
+    section_mappings: Mapped[List["TeacherSectionMap"]] = relationship(
+        "TeacherSectionMap",
         back_populates="teacher",
+        cascade="all, delete-orphan",
+    )
+
+    attendance_records: Mapped[List["Attendance"]] = relationship(
+        "Attendance",
+        back_populates="teacher",
+        cascade="all, delete-orphan",
     )

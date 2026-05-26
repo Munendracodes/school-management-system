@@ -1,7 +1,9 @@
+from __future__ import annotations
+
+from typing import List
+
 from sqlalchemy import (
     String,
-    Boolean,
-    Integer,
     ForeignKey,
 )
 
@@ -18,29 +20,27 @@ class Section(BaseModel):
 
     __tablename__ = "sections"
 
-    name: Mapped[str] = mapped_column(
-        String(50),
-        nullable=False,
-    )
-
     classroom_id: Mapped[str] = mapped_column(
         ForeignKey("classrooms.id"),
         nullable=False,
     )
 
-    capacity: Mapped[int] = mapped_column(
-        Integer,
-        default=40,
+    name: Mapped[str] = mapped_column(
+        String(10),
+        nullable=False,
     )
 
-    display_order: Mapped[int] = mapped_column(
-        Integer,
-        default=1,
+    classroom = relationship(
+        "Classroom",
+        back_populates="sections",
     )
 
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
+    students: Mapped[List["Student"]] = relationship(
+        "Student",
+        back_populates="section",
     )
 
-    classroom = relationship("ClassRoom")
+    teacher_mappings: Mapped[List["TeacherSectionMap"]] = relationship(
+        "TeacherSectionMap",
+        back_populates="section",
+    )

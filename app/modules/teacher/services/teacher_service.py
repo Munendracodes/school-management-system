@@ -21,23 +21,16 @@ class TeacherService:
         db: Session,
         payload,
     ):
-        existing_teacher = TeacherRepository.get_by_employee_id(
-            db,
-            payload.employee_id,
-        )
 
-        if existing_teacher:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Employee ID already exists",
+        existing_mobile = (
+            TeacherRepository.get_by_mobile_number(
+                db,
+                payload.mobile_number,
             )
-
-        existing_mobile = TeacherRepository.get_by_mobile_number(
-            db,
-            payload.mobile_number,
         )
 
         if existing_mobile:
+
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Mobile number already exists",
@@ -52,19 +45,26 @@ class TeacherService:
     def get_teachers(
         db: Session,
     ):
-        return TeacherRepository.get_all(db)
+
+        return TeacherRepository.get_all(
+            db
+        )
 
     @staticmethod
     def get_teacher_by_id(
         db: Session,
         teacher_id,
     ):
-        teacher = TeacherRepository.get_by_id(
-            db,
-            teacher_id,
+
+        teacher = (
+            TeacherRepository.get_by_id(
+                db,
+                teacher_id,
+            )
         )
 
         if not teacher:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Teacher not found",
@@ -78,12 +78,16 @@ class TeacherService:
         teacher_id,
         payload,
     ):
-        teacher = TeacherRepository.get_by_id(
-            db,
-            teacher_id,
+
+        teacher = (
+            TeacherRepository.get_by_id(
+                db,
+                teacher_id,
+            )
         )
 
         if not teacher:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Teacher not found",
@@ -92,7 +96,9 @@ class TeacherService:
         return TeacherRepository.update(
             db,
             teacher,
-            payload.model_dump(exclude_unset=True),
+            payload.model_dump(
+                exclude_unset=True
+            ),
         )
 
     @staticmethod
@@ -100,12 +106,16 @@ class TeacherService:
         db: Session,
         teacher_id,
     ):
-        teacher = TeacherRepository.get_by_id(
-            db,
-            teacher_id,
+
+        teacher = (
+            TeacherRepository.get_by_id(
+                db,
+                teacher_id,
+            )
         )
 
         if not teacher:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Teacher not found",
@@ -117,7 +127,8 @@ class TeacherService:
         )
 
         return {
-            "message": "Teacher deleted successfully",
+            "message":
+            "Teacher deleted successfully"
         }
 
     @staticmethod
@@ -125,29 +136,38 @@ class TeacherService:
         db: Session,
         payload,
     ):
-        teacher = TeacherRepository.get_by_id(
-            db,
-            payload.teacher_id,
+
+        teacher = (
+            TeacherRepository.get_by_id(
+                db,
+                payload.teacher_id,
+            )
         )
 
         if not teacher:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Teacher not found",
             )
 
-        section = SectionRepository.get_by_id(
-            db,
-            payload.section_id,
+        section = (
+            SectionRepository.get_by_id(
+                db,
+                payload.section_id,
+            )
         )
 
         if not section:
+
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Section not found",
             )
 
-        return TeacherRepository.create_teacher_section_mapping(
-            db,
-            payload.model_dump(),
+        return (
+            TeacherRepository.create_teacher_section_mapping(
+                db,
+                payload.model_dump(),
+            )
         )

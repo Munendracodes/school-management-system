@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+from typing import List
+
 from sqlalchemy import (
     String,
-    Boolean,
 )
 
 from sqlalchemy.orm import (
@@ -10,59 +13,31 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import BaseModel
+from app.modules.student_parent_map.models.student_parent_map_model import StudentParentMap
 
 
 class Parent(BaseModel):
 
     __tablename__ = "parents"
 
-    father_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=True,
-    )
-
-    mother_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=True,
-    )
-
-    guardian_name: Mapped[str] = mapped_column(
-        String(150),
+    full_name: Mapped[str] = mapped_column(
+        String(100),
         nullable=False,
     )
 
     mobile_number: Mapped[str] = mapped_column(
-        String(20),
+        String(15),
         nullable=False,
         unique=True,
     )
 
-    alternate_mobile_number: Mapped[str] = mapped_column(
-        String(20),
-        nullable=True,
-    )
-
     email: Mapped[str] = mapped_column(
-        String(150),
+        String(100),
         nullable=True,
     )
 
-    occupation: Mapped[str] = mapped_column(
-        String(150),
-        nullable=True,
-    )
-
-    address: Mapped[str] = mapped_column(
-        String(500),
-        nullable=True,
-    )
-
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
-    )
-
-    students = relationship(
-        "StudentParentMapping",
+    student_mappings: Mapped[List["StudentParentMap"]] = relationship(
+        "StudentParentMap",
         back_populates="parent",
+        cascade="all, delete-orphan",
     )

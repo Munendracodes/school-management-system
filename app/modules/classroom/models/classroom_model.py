@@ -1,28 +1,43 @@
-from sqlalchemy import Boolean, ForeignKey, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from __future__ import annotations
+
+from typing import List
+
+from sqlalchemy import (
+    String,
+    ForeignKey,
+)
+
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
 from app.database.base import BaseModel
+from app.modules.section.models.section_model import Section
+from app.modules.academic_year.models.academic_year_model import AcademicYear
 
 
-class ClassRoom(BaseModel):
+class Classroom(BaseModel):
+
     __tablename__ = "classrooms"
-
-    name: Mapped[str] = mapped_column(
-        String(100),
-        nullable=False,
-    )
-
-    display_order: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False,
-    )
 
     academic_year_id: Mapped[str] = mapped_column(
         ForeignKey("academic_years.id"),
         nullable=False,
     )
 
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
+    name: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+    )
+
+    academic_year = relationship(
+        "AcademicYear",
+        back_populates="classrooms",
+    )
+
+    sections: Mapped[List["Section"]] = relationship(
+        "Section",
+        back_populates="classroom",
     )

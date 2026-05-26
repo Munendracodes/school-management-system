@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from datetime import date
+from typing import List
 
 from sqlalchemy import (
     String,
-    Boolean,
     Date,
     ForeignKey,
 )
@@ -14,6 +16,8 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import BaseModel
+from app.modules.attendance.models.attendance_model import Attendance
+from app.modules.student_parent_map.models.student_parent_map_model import StudentParentMap
 
 
 class Student(BaseModel):
@@ -21,13 +25,13 @@ class Student(BaseModel):
     __tablename__ = "students"
 
     admission_number: Mapped[str] = mapped_column(
-        String(50),
+        String(30),
         unique=True,
         nullable=False,
     )
 
     full_name: Mapped[str] = mapped_column(
-        String(150),
+        String(100),
         nullable=False,
     )
 
@@ -41,61 +45,24 @@ class Student(BaseModel):
         nullable=False,
     )
 
-    mobile_number: Mapped[str] = mapped_column(
-        String(20),
-        nullable=True,
-    )
-
-    email: Mapped[str] = mapped_column(
-        String(150),
-        nullable=True,
-    )
-
-    address: Mapped[str] = mapped_column(
-        String(500),
-        nullable=True,
-    )
-
-    guardian_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=False,
-    )
-
-    guardian_mobile_number: Mapped[str] = mapped_column(
-        String(20),
-        nullable=False,
-    )
-
-    academic_year_id: Mapped[str] = mapped_column(
-        ForeignKey("academic_years.id"),
-        nullable=False,
-    )
-
-    classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id"),
-        nullable=False,
-    )
-
     section_id: Mapped[str] = mapped_column(
         ForeignKey("sections.id"),
         nullable=False,
     )
 
-    roll_number: Mapped[str] = mapped_column(
-        String(20),
-        nullable=False,
+    section = relationship(
+        "Section",
+        back_populates="students",
     )
 
-    admission_date: Mapped[date] = mapped_column(
-        Date,
-        nullable=False,
+    parent_mappings: Mapped[List["StudentParentMap"]] = relationship(
+    "StudentParentMap",
+    back_populates="student",
+    cascade="all, delete-orphan",
     )
 
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
+    attendance_records = relationship(
+        "Attendance",
+        back_populates="student",
+        cascade="all, delete-orphan",
     )
-
-    academic_year = relationship("AcademicYear")
-    classroom = relationship("ClassRoom")
-    section = relationship("Section")

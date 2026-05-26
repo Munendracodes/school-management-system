@@ -1,9 +1,61 @@
-from datetime import date
 from uuid import UUID
-from typing import Optional
+from typing import Optional, List
+from datetime import date
 
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+)
 
+
+# --------------------------
+# Nested Schemas
+# --------------------------
+
+class ClassroomShortSchema(BaseModel):
+
+    id: UUID
+    name: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+class SectionShortSchema(BaseModel):
+
+    id: UUID
+    name: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+class AcademicYearShortSchema(BaseModel):
+
+    id: UUID
+    name: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+class ParentShortSchema(BaseModel):
+
+    id: UUID
+    full_name: str
+    relationship_type: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+# --------------------------
+# Create / Update
+# --------------------------
 
 class StudentCreateSchema(BaseModel):
 
@@ -11,32 +63,23 @@ class StudentCreateSchema(BaseModel):
     full_name: str
     gender: str
     date_of_birth: date
-    mobile_number: Optional[str] = None
-    email: Optional[str] = None
-    address: Optional[str] = None
-    guardian_name: str
-    guardian_mobile_number: str
-    academic_year_id: UUID
-    classroom_id: UUID
+
     section_id: UUID
-    roll_number: str
-    admission_date: date
 
 
 class StudentUpdateSchema(BaseModel):
 
+    admission_number: Optional[str] = None
     full_name: Optional[str] = None
     gender: Optional[str] = None
-    mobile_number: Optional[str] = None
-    email: Optional[str] = None
-    address: Optional[str] = None
-    guardian_name: Optional[str] = None
-    guardian_mobile_number: Optional[str] = None
-    classroom_id: Optional[UUID] = None
-    section_id: Optional[UUID] = None
-    roll_number: Optional[str] = None
-    is_active: Optional[bool] = None
+    date_of_birth: Optional[date] = None
 
+    section_id: Optional[UUID] = None
+
+
+# --------------------------
+# Response
+# --------------------------
 
 class StudentResponseSchema(BaseModel):
 
@@ -45,17 +88,15 @@ class StudentResponseSchema(BaseModel):
     full_name: str
     gender: str
     date_of_birth: date
-    mobile_number: Optional[str]
-    email: Optional[str]
-    address: Optional[str]
-    guardian_name: str
-    guardian_mobile_number: str
-    academic_year_id: UUID
-    classroom_id: UUID
-    section_id: UUID
-    roll_number: str
-    admission_date: date
-    is_active: bool
 
-    class Config:
-        from_attributes = True
+    classroom: ClassroomShortSchema
+    section: SectionShortSchema
+    academic_year: AcademicYearShortSchema
+
+    parents: List[
+        ParentShortSchema
+    ] = []
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

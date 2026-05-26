@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from datetime import date
-from sqlalchemy import Index
 
 from sqlalchemy import (
     String,
@@ -25,11 +26,6 @@ class Attendance(BaseModel):
         nullable=False,
     )
 
-    section_id: Mapped[str] = mapped_column(
-        ForeignKey("sections.id"),
-        nullable=False,
-    )
-
     teacher_id: Mapped[str] = mapped_column(
         ForeignKey("teachers.id"),
         nullable=False,
@@ -50,23 +46,12 @@ class Attendance(BaseModel):
         nullable=True,
     )
 
-    student = relationship("Student")
+    student = relationship(
+        "Student",
+        back_populates="attendance_records",
+    )
 
-    section = relationship("Section")
-
-    teacher = relationship("Teacher")
-
-    __table_args__ = (
-    Index(
-        "idx_attendance_date",
-        "attendance_date",
-    ),
-    Index(
-        "idx_attendance_student",
-        "student_id",
-    ),
-    Index(
-        "idx_attendance_section",
-        "section_id",
-    ),
-)
+    teacher = relationship(
+        "Teacher",
+        back_populates="attendance_records",
+    )

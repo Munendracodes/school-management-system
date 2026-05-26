@@ -13,10 +13,6 @@ from app.modules.student.repositories.student_repository import (
     StudentRepository,
 )
 
-from app.modules.section.repositories.section_repository import (
-    SectionRepository,
-)
-
 from app.modules.teacher.repositories.teacher_repository import (
     TeacherRepository,
 )
@@ -29,6 +25,7 @@ class AttendanceService:
         db: Session,
         payload,
     ):
+
         student = StudentRepository.get_by_id(
             db,
             payload.student_id,
@@ -40,17 +37,6 @@ class AttendanceService:
                 detail="Student not found",
             )
 
-        section = SectionRepository.get_by_id(
-            db,
-            payload.section_id,
-        )
-
-        if not section:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Section not found",
-            )
-
         teacher = TeacherRepository.get_by_id(
             db,
             payload.teacher_id,
@@ -60,12 +46,6 @@ class AttendanceService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Teacher not found",
-            )
-
-        if str(student.section_id) != str(payload.section_id):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Student does not belong to section",
             )
 
         valid_statuses = [
@@ -90,26 +70,20 @@ class AttendanceService:
     def get_attendance(
         db: Session,
     ):
-        return AttendanceRepository.get_all(db)
+
+        return AttendanceRepository.get_all(
+            db
+        )
 
     @staticmethod
     def get_attendance_by_student(
         db: Session,
         student_id,
     ):
+
         return AttendanceRepository.get_by_student(
             db,
             student_id,
-        )
-
-    @staticmethod
-    def get_attendance_by_section(
-        db: Session,
-        section_id,
-    ):
-        return AttendanceRepository.get_by_section(
-            db,
-            section_id,
         )
 
     @staticmethod
@@ -118,6 +92,7 @@ class AttendanceService:
         attendance_id,
         payload,
     ):
+
         attendance = AttendanceRepository.get_by_id(
             db,
             attendance_id,
@@ -132,7 +107,9 @@ class AttendanceService:
         return AttendanceRepository.update(
             db,
             attendance,
-            payload.model_dump(exclude_unset=True),
+            payload.model_dump(
+                exclude_unset=True,
+            ),
         )
 
     @staticmethod
@@ -140,6 +117,7 @@ class AttendanceService:
         db: Session,
         attendance_id,
     ):
+
         attendance = AttendanceRepository.get_by_id(
             db,
             attendance_id,
@@ -157,5 +135,6 @@ class AttendanceService:
         )
 
         return {
-            "message": "Attendance deleted successfully",
+            "message":
+            "Attendance deleted successfully"
         }

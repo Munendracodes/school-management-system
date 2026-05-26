@@ -59,6 +59,10 @@ from app.modules.teacher.routers.teacher_router import (
     router as teacher_router,
 )
 
+from app.modules.student_parent_map.routers.student_parent_map_router import (
+    router as student_parent_mapping_router,
+)
+
 # ==========================
 # OPERATIONAL MODULES
 # ==========================
@@ -89,6 +93,10 @@ from app.modules.homepage.routers.homepage_section_router import (
 
 from app.modules.homepage.routers.homepage_item_router import (
     router as homepage_item_router,
+)
+
+from app.modules.teacher_section_map.routers.teacher_section_map_router import (
+    router as teacher_section_mapping_router,
 )
 
 
@@ -202,6 +210,14 @@ app.include_router(
 
 app.include_router(
     homepage_item_router
+)
+
+app.include_router(
+    student_parent_mapping_router
+)
+
+app.include_router(
+    teacher_section_mapping_router
 )
 
 

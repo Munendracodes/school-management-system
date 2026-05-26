@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.modules.academic_year.repositories.academic_year_repository import (
     AcademicYearRepository,
 )
-from app.modules.classroom.models.classroom_model import ClassRoom
+from app.modules.classroom.models.classroom_model import Classroom as ClassRoom
 from app.modules.classroom.repositories.classroom_repository import (
     ClassRoomRepository,
 )
@@ -48,9 +48,7 @@ class ClassRoomService:
 
         classroom = ClassRoom(
             name=payload.name,
-            display_order=payload.display_order,
-            academic_year_id=str(payload.academic_year_id),
-            is_active=payload.is_active,
+            academic_year_id=str(payload.academic_year_id)
         )
 
         return ClassRoomRepository.create(

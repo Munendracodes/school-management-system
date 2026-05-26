@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from sqlalchemy import (
     String,
-    Boolean,
     ForeignKey,
 )
 
@@ -10,10 +11,13 @@ from sqlalchemy.orm import (
     relationship,
 )
 
+from sqlalchemy import UniqueConstraint
+
+
 from app.database.base import BaseModel
 
 
-class TeacherSectionMapping(BaseModel):
+class TeacherSectionMap(BaseModel):
 
     __tablename__ = "teacher_section_mappings"
 
@@ -32,14 +36,21 @@ class TeacherSectionMapping(BaseModel):
         nullable=False,
     )
 
-    is_class_teacher: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-    )
-
     teacher = relationship(
         "Teacher",
-        back_populates="sections",
+        back_populates="section_mappings",
     )
 
-    section = relationship("Section")
+    section = relationship(
+        "Section",
+        back_populates="teacher_mappings",
+    )
+
+    __table_args__ = (
+    UniqueConstraint(
+        "teacher_id",
+        "section_id",
+        "subject_name",
+        name="uq_teacher_section_subject"
+    ),
+)

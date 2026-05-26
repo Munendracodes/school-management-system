@@ -1,7 +1,34 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from uuid import UUID
 
-from app.modules.student.models.student_model import Student
+from sqlalchemy import (
+    select,
+)
+
+from sqlalchemy.orm import (
+    Session,
+    selectinload,
+)
+
+from app.modules.student.models.student_model import (
+    Student,
+)
+
+from app.modules.student_parent_map.models.student_parent_map_model import (
+    StudentParentMap,
+)
+
+from app.modules.section.models.section_model import (
+    Section,
+)
+
+from app.modules.classroom.models.classroom_model import (
+    Classroom,
+)
+
+from sqlalchemy import (
+    select,
+    func,
+)
 
 
 class StudentRepository:
@@ -11,12 +38,20 @@ class StudentRepository:
         db: Session,
         payload: dict,
     ):
-        student = Student(**payload)
 
-        db.add(student)
+        student = Student(
+            **payload
+        )
+
+        db.add(
+            student
+        )
 
         db.commit()
-        db.refresh(student)
+
+        db.refresh(
+            student
+        )
 
         return student
 
@@ -24,35 +59,87 @@ class StudentRepository:
     def get_all(
         db: Session,
     ):
-        query = select(Student).where(
-            Student.is_deleted == False,
+
+        query = (
+            select(Student)
+
+            .options(
+
+                selectinload(
+                    Student.section
+                )
+
+                .selectinload(
+                    Section.classroom
+                )
+
+                .selectinload(
+                    Classroom.academic_year
+                ),
+
+                selectinload(
+                    Student.parent_mappings
+                )
+
+                .selectinload(
+                    StudentParentMap.parent
+                )
+            )
+
+            .where(
+                Student.is_deleted.is_(
+                    False
+                )
+            )
         )
 
-        return db.scalars(query).all()
+        return db.scalars(
+            query
+        ).all()
 
     @staticmethod
     def get_by_id(
         db: Session,
-        student_id: str,
+        student_id: UUID,
     ):
-        query = select(Student).where(
-            Student.id == student_id,
-            Student.is_deleted == False,
+
+        query = (
+            select(Student)
+
+            .options(
+
+                selectinload(
+                    Student.section
+                )
+
+                .selectinload(
+                    Section.classroom
+                )
+
+                .selectinload(
+                    Classroom.academic_year
+                ),
+
+                selectinload(
+                    Student.parent_mappings
+                )
+
+                .selectinload(
+                    StudentParentMap.parent
+                )
+            )
+
+            .where(
+                Student.id == student_id,
+                Student.is_deleted.is_(
+                    False
+                )
+            )
         )
 
-        return db.scalar(query)
-
-    @staticmethod
-    def get_by_admission_number(
-        db: Session,
-        admission_number: str,
-    ):
-        query = select(Student).where(
-            Student.admission_number == admission_number,
-            Student.is_deleted == False,
+        return db.scalar(
+            query
         )
-
-        return db.scalar(query)
 
     @staticmethod
     def update(
@@ -60,27 +147,27 @@ class StudentRepository:
         student: Student,
         payload: dict,
     ):
+
         for key, value in payload.items():
-            setattr(student, key, value)
+
+            setattr(
+                student,
+                key,
+                value,
+            )
 
         db.commit()
-        db.refresh(student)
+
+        db.refresh(
+            student
+        )
 
         return student
-
-    @staticmethod
-    def soft_delete(
-        db: Session,
-        student: Student,
-    ):
-        student.is_deleted = True
-
-        db.commit()
     
     @staticmethod
     def get_count(
-        db,
-    ):
+        db: Session,
+    ) -> int:
 
         query = (
             select(
@@ -88,12 +175,10 @@ class StudentRepository:
                     Student.id
                 )
             )
+
             .where(
                 Student.is_deleted.is_(
                     False
-                ),
-                Student.is_active.is_(
-                    True
                 )
             )
         )
@@ -101,3 +186,13 @@ class StudentRepository:
         return db.scalar(
             query
         ) or 0
+
+    @staticmethod
+    def soft_delete(
+        db: Session,
+        student: Student,
+    ):
+
+        student.is_deleted = True
+
+        db.commit()

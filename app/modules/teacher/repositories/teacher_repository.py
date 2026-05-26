@@ -1,10 +1,16 @@
-from sqlalchemy import func, select
+from sqlalchemy import (
+    func,
+    select,
+)
+
 from sqlalchemy.orm import Session
 
-from app.modules.teacher.models.teacher_model import Teacher
+from app.modules.teacher.models.teacher_model import (
+    Teacher,
+)
 
-from app.modules.teacher.models.teacher_section_mapping_model import (
-    TeacherSectionMapping,
+from app.modules.teacher_section_map.models.teacher_section_map_model import (
+    TeacherSectionMap,
 )
 
 
@@ -28,8 +34,11 @@ class TeacherRepository:
     def get_all(
         db: Session,
     ):
-        query = select(Teacher).where(
-            Teacher.is_deleted == False,
+        query = (
+            select(Teacher)
+            .where(
+                Teacher.is_deleted.is_(False)
+            )
         )
 
         return db.scalars(query).all()
@@ -39,21 +48,12 @@ class TeacherRepository:
         db: Session,
         teacher_id: str,
     ):
-        query = select(Teacher).where(
-            Teacher.id == teacher_id,
-            Teacher.is_deleted == False,
-        )
-
-        return db.scalar(query)
-
-    @staticmethod
-    def get_by_employee_id(
-        db: Session,
-        employee_id: str,
-    ):
-        query = select(Teacher).where(
-            Teacher.employee_id == employee_id,
-            Teacher.is_deleted == False,
+        query = (
+            select(Teacher)
+            .where(
+                Teacher.id == teacher_id,
+                Teacher.is_deleted.is_(False),
+            )
         )
 
         return db.scalar(query)
@@ -63,9 +63,12 @@ class TeacherRepository:
         db: Session,
         mobile_number: str,
     ):
-        query = select(Teacher).where(
-            Teacher.mobile_number == mobile_number,
-            Teacher.is_deleted == False,
+        query = (
+            select(Teacher)
+            .where(
+                Teacher.mobile_number == mobile_number,
+                Teacher.is_deleted.is_(False),
+            )
         )
 
         return db.scalar(query)
@@ -77,7 +80,11 @@ class TeacherRepository:
         payload: dict,
     ):
         for key, value in payload.items():
-            setattr(teacher, key, value)
+            setattr(
+                teacher,
+                key,
+                value,
+            )
 
         db.commit()
         db.refresh(teacher)
@@ -94,20 +101,6 @@ class TeacherRepository:
         db.commit()
 
     @staticmethod
-    def create_teacher_section_mapping(
-        db: Session,
-        payload: dict,
-    ):
-        mapping = TeacherSectionMapping(**payload)
-
-        db.add(mapping)
-
-        db.commit()
-        db.refresh(mapping)
-
-        return mapping
-    
-    @staticmethod
     def get_count(
         db: Session,
     ):
@@ -119,15 +112,48 @@ class TeacherRepository:
                 )
             )
             .where(
-                Teacher.is_deleted.is_(
-                    False
-                ),
-                Teacher.is_active.is_(
-                    True
-                )
+                Teacher.is_deleted.is_(False)
             )
         )
 
-        return db.scalar(
-            query
-        ) or 0
+        return db.scalar(query) or 0
+    
+    @staticmethod
+    def create_teacher_section_mapping(
+        db: Session,
+        payload: dict,
+    ):
+
+        existing = db.scalar(
+
+            select(
+                TeacherSectionMap
+            )
+
+            .where(
+                TeacherSectionMap.teacher_id ==
+                payload["teacher_id"],
+
+                TeacherSectionMap.section_id ==
+                payload["section_id"]
+            )
+        )
+
+        if existing:
+            return existing
+
+        mapping = TeacherSectionMap(
+            **payload
+        )
+
+        db.add(
+            mapping
+        )
+
+        db.commit()
+
+        db.refresh(
+            mapping
+        )
+
+        return mapping

@@ -9,14 +9,6 @@ from app.modules.student.repositories.student_repository import (
     StudentRepository,
 )
 
-from app.modules.academic_year.repositories.academic_year_repository import (
-    AcademicYearRepository,
-)
-
-from app.modules.classroom.repositories.classroom_repository import (
-    ClassRoomRepository,
-)
-
 from app.modules.section.repositories.section_repository import (
     SectionRepository,
 )
@@ -29,38 +21,6 @@ class StudentService:
         db: Session,
         payload,
     ):
-        existing_student = StudentRepository.get_by_admission_number(
-            db,
-            payload.admission_number,
-        )
-
-        if existing_student:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Admission number already exists",
-            )
-
-        academic_year = AcademicYearRepository.get_by_id(
-            db,
-            payload.academic_year_id,
-        )
-
-        if not academic_year:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Academic year not found",
-            )
-
-        classroom = ClassRoomRepository.get_by_id(
-            db,
-            payload.classroom_id,
-        )
-
-        if not classroom:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Classroom not found",
-            )
 
         section = SectionRepository.get_by_id(
             db,
@@ -73,28 +33,96 @@ class StudentService:
                 detail="Section not found",
             )
 
-        if str(section.classroom_id) != str(payload.classroom_id):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Section does not belong to classroom",
-            )
-
-        return StudentRepository.create(
+        student = StudentRepository.create(
             db,
             payload.model_dump(),
         )
+
+        return {
+            "id": student.id,
+            "admission_number": student.admission_number,
+            "full_name": student.full_name,
+            "gender": student.gender,
+            "date_of_birth": student.date_of_birth,
+
+            "section": {
+                "id": student.section.id,
+                "name": student.section.name,
+            },
+
+            "classroom": {
+                "id": student.section.classroom.id,
+                "name": student.section.classroom.name,
+            },
+
+            "academic_year": {
+                "id": student.section.classroom.academic_year.id,
+                "name": student.section.classroom.academic_year.name,
+            },
+
+            "parents": []
+        }
 
     @staticmethod
     def get_students(
         db: Session,
     ):
-        return StudentRepository.get_all(db)
+
+        students = StudentRepository.get_all(
+            db,
+        )
+
+        result = []
+
+        for student in students:
+
+            parents = []
+
+            for mapping in student.parent_mappings:
+
+                parents.append(
+                    {
+                        "id": mapping.parent.id,
+                        "full_name": mapping.parent.full_name,
+                        "relationship_type": mapping.relationship_type,
+                    }
+                )
+
+            result.append(
+                {
+                    "id": student.id,
+                    "admission_number": student.admission_number,
+                    "full_name": student.full_name,
+                    "gender": student.gender,
+                    "date_of_birth": student.date_of_birth,
+
+                    "section": {
+                        "id": student.section.id,
+                        "name": student.section.name,
+                    },
+
+                    "classroom": {
+                        "id": student.section.classroom.id,
+                        "name": student.section.classroom.name,
+                    },
+
+                    "academic_year": {
+                        "id": student.section.classroom.academic_year.id,
+                        "name": student.section.classroom.academic_year.name,
+                    },
+
+                    "parents": parents,
+                }
+            )
+
+        return result
 
     @staticmethod
     def get_student_by_id(
         db: Session,
         student_id,
     ):
+
         student = StudentRepository.get_by_id(
             db,
             student_id,
@@ -106,7 +134,42 @@ class StudentService:
                 detail="Student not found",
             )
 
-        return student
+        parents = []
+
+        for mapping in student.parent_mappings:
+
+            parents.append(
+                {
+                    "id": mapping.parent.id,
+                    "full_name": mapping.parent.full_name,
+                    "relationship_type": mapping.relationship_type,
+                }
+            )
+
+        return {
+            "id": student.id,
+            "admission_number": student.admission_number,
+            "full_name": student.full_name,
+            "gender": student.gender,
+            "date_of_birth": student.date_of_birth,
+
+            "section": {
+                "id": student.section.id,
+                "name": student.section.name,
+            },
+
+            "classroom": {
+                "id": student.section.classroom.id,
+                "name": student.section.classroom.name,
+            },
+
+            "academic_year": {
+                "id": student.section.classroom.academic_year.id,
+                "name": student.section.classroom.academic_year.name,
+            },
+
+            "parents": parents,
+        }
 
     @staticmethod
     def update_student(
@@ -114,6 +177,7 @@ class StudentService:
         student_id,
         payload,
     ):
+
         student = StudentRepository.get_by_id(
             db,
             student_id,
@@ -128,7 +192,9 @@ class StudentService:
         return StudentRepository.update(
             db,
             student,
-            payload.model_dump(exclude_unset=True),
+            payload.model_dump(
+                exclude_unset=True
+            ),
         )
 
     @staticmethod
@@ -136,6 +202,7 @@ class StudentService:
         db: Session,
         student_id,
     ):
+
         student = StudentRepository.get_by_id(
             db,
             student_id,
@@ -153,5 +220,5 @@ class StudentService:
         )
 
         return {
-            "message": "Student deleted successfully",
+            "message": "Student deleted successfully"
         }
