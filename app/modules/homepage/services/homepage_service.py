@@ -19,6 +19,9 @@ from app.modules.teacher.repositories.teacher_repository import (
     TeacherRepository,
 )
 
+from app.modules.parent.repositories.parent_repository import (
+    ParentRepository)
+
 
 class HomepageService:
 
@@ -37,6 +40,11 @@ class HomepageService:
 
             "TOTAL_TEACHERS":
             lambda: TeacherRepository.get_count(
+                db
+            ),
+
+            "TOTAL_PARENTS":
+            lambda: ParentRepository.get_count(
                 db
             ),
 

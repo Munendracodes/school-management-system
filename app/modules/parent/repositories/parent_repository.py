@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import (
+    func,
     select,
 )
 
@@ -166,6 +167,31 @@ class ParentRepository:
         )
 
         return parent
+    
+    @staticmethod
+    def get_count(
+        db: Session,
+    ) -> int:
+
+        query = (
+            select(
+                func.count(
+                    Parent.id
+                )
+            )
+
+            .where(
+                Parent.is_deleted.is_(
+                    False
+                )
+            )
+        )
+
+        return (
+            db.scalar(
+                query
+            ) or 0
+        )
 
     @staticmethod
     def soft_delete(
