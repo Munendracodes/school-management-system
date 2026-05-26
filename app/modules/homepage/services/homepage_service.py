@@ -273,6 +273,9 @@ class HomepageService:
                 "text_color":
                 section.text_color,
 
+                "display_order":
+                section.display_order,
+
                 "items":[]
             }
 
