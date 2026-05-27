@@ -28,3 +28,12 @@ class SectionResponseSchema(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+class SectionWithClassroomResponseSchema(BaseModel):
+
+    id: UUID
+    name: str
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )

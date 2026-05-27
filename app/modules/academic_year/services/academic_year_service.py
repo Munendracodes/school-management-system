@@ -55,3 +55,31 @@ class AcademicYearService:
         db: Session,
     ):
         return AcademicYearRepository.get_all(db=db)
+    
+    @staticmethod
+    def get_current_academic_year_with_classes(
+        db: Session,
+    ):
+        print("\n========== SERVICE START ==========")
+
+        academic_year = (
+            AcademicYearRepository.get_current_academic_year(
+                db=db,
+            )
+        )
+
+        print("\n========== SERVICE RESULT ==========")
+        print(academic_year)
+
+        if not academic_year:
+
+            print("\n========== RAISING 404 ==========")
+
+            raise HTTPException(
+                status_code=404,
+                detail="Academic year not found",
+            )
+
+        print("\n========== RETURNING RESPONSE ==========")
+
+        return academic_year

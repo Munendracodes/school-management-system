@@ -6,7 +6,7 @@ from app.modules.academic_year.schemas.academic_year_create_schema import (
     AcademicYearCreateSchema,
 )
 from app.modules.academic_year.schemas.academic_year_response_schema import (
-    AcademicYearResponseSchema,
+    AcademicYearResponseSchema,AcademicYearWithClassesResponseSchema
 )
 from app.modules.academic_year.services.academic_year_service import (
     AcademicYearService,
@@ -50,5 +50,18 @@ def get_all_academic_years(
     current_user: UserModel = Depends(get_current_user),
 ):
     return AcademicYearService.get_all_academic_years(
+        db=db,
+    )
+
+@router.get(
+    "/active",
+    response_model=AcademicYearWithClassesResponseSchema,
+)
+
+def get_current_academic_year_with_classes(
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+):
+    return AcademicYearService.get_current_academic_year_with_classes(
         db=db,
     )

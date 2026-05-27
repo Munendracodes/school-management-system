@@ -14,8 +14,6 @@ from sqlalchemy.orm import (
 )
 
 from app.database.base import BaseModel
-from app.modules.section.models.section_model import Section
-from app.modules.academic_year.models.academic_year_model import AcademicYear
 
 
 class Classroom(BaseModel):
