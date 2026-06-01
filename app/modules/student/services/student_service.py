@@ -85,8 +85,14 @@ class StudentService:
                         "id": mapping.parent.id,
                         "full_name": mapping.parent.full_name,
                         "relationship_type": mapping.relationship_type,
+                        "mobile_number": mapping.parent.mobile_number,
                     }
                 )
+            
+            fee_information = {
+                "total_fee": 40000,
+                "paid_fee": 25000
+            }
 
             result.append(
                 {
@@ -112,6 +118,7 @@ class StudentService:
                     },
 
                     "parents": parents,
+                    "fee_information": fee_information,
                 }
             )
 
@@ -143,6 +150,7 @@ class StudentService:
                     "id": mapping.parent.id,
                     "full_name": mapping.parent.full_name,
                     "relationship_type": mapping.relationship_type,
+                    "mobile_number": mapping.parent.mobile_number,
                 }
             )
 

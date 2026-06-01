@@ -47,6 +47,7 @@ class ParentShortSchema(BaseModel):
     id: UUID
     full_name: str
     relationship_type: str
+    mobile_number: Optional[str] = None
 
     model_config = ConfigDict(
         from_attributes=True
@@ -96,6 +97,8 @@ class StudentResponseSchema(BaseModel):
     parents: List[
         ParentShortSchema
     ] = []
+
+    fee_information: Optional[dict] = None
 
     model_config = ConfigDict(
         from_attributes=True

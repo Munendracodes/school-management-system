@@ -8,7 +8,21 @@ from sqlalchemy.orm import Session
 from app.modules.parent.repositories.parent_repository import (
     ParentRepository,
 )
+from app.modules.parent.schemas.parent_schema import ParentCreateSchemaAndMapStudent
+from app.modules.student_parent_map.repositories.student_parent_map_repository import StudentParentMapRepository
+from app.modules.student_parent_map.schemas.student_parent_map_schema import StudentParentMapCreateSchema
 
+from app.modules.parent.repositories.parent_repository import (
+    ParentRepository,
+)
+
+from app.modules.student_parent_map.repositories.student_parent_map_repository import (
+    StudentParentMapRepository,
+)
+
+from app.modules.student_parent_map.schemas.student_parent_map_schema import (
+    StudentParentMapCreateSchema,
+)
 
 class ParentService:
 
@@ -187,3 +201,67 @@ class ParentService:
         return {
             "message": "Parent deleted successfully"
         }
+    
+    @staticmethod
+    def create_parent_and_map_student(
+        db: Session,
+        payload: ParentCreateSchemaAndMapStudent,
+    ):
+        try:
+
+            existing_mapping = (
+                StudentParentMapRepository.get_by_student_and_relationship(
+                    db=db,
+                    student_id=payload.student_id,
+                    relationship_type=payload.relationship_type,
+                )
+            )
+
+            if existing_mapping:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        f"{payload.relationship_type} already exists "
+                        f"for this student"
+                    ),
+                )
+
+            parent = ParentRepository.create(
+                db=db,
+                payload=payload.model_dump(
+                    exclude={
+                        "student_id",
+                        "relationship_type",
+                    }
+                ),
+                commit=False,
+            )
+
+            db.flush()
+
+            mapping_payload = {
+                "student_id": payload.student_id,
+                "parent_id": parent.id,
+                "relationship_type": payload.relationship_type,
+            }
+
+            StudentParentMapRepository.create(
+                db=db,
+                payload=mapping_payload,
+                commit=False,
+            )
+
+            db.commit()
+
+            db.refresh(
+                parent
+            )
+
+            return {
+                "message": "Parent created and mapped successfully",
+                "parent_id": parent.id,
+            }
+
+        except Exception:
+            db.rollback()
+            raise

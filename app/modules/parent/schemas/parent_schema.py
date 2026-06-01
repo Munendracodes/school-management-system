@@ -53,6 +53,10 @@ class ParentCreateSchema(BaseModel):
     mobile_number: str
     email: Optional[str] = None
 
+class ParentCreateSchemaAndMapStudent(ParentCreateSchema):
+    student_id: UUID
+    relationship_type: str
+
 
 class ParentUpdateSchema(BaseModel):
     full_name: Optional[str] = None

@@ -23,7 +23,12 @@ class StudentParentMap(BaseModel):
         UniqueConstraint(
             "student_id",
             "parent_id",
-            name="uq_student_parent"
+            name="uq_student_parent",
+        ),
+        UniqueConstraint(
+            "student_id",
+            "relationship_type",
+            name="uq_student_relationship_type",
         ),
     )
 

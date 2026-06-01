@@ -1,3 +1,7 @@
+from sqlalchemy import (
+    select,
+    func,
+)
 from sqlalchemy.orm import Session
 
 from app.modules.student_parent_map.models.student_parent_map_model import (
@@ -11,8 +15,8 @@ class StudentParentMapRepository:
     def create(
         db: Session,
         payload: dict,
+        commit: bool = True,
     ):
-
         mapping = StudentParentMap(
             **payload
         )
@@ -21,11 +25,11 @@ class StudentParentMapRepository:
             mapping
         )
 
-        db.commit()
-
-        db.refresh(
-            mapping
-        )
+        if commit:
+            db.commit()
+            db.refresh(
+                mapping
+            )
 
         return mapping
 
@@ -35,15 +39,37 @@ class StudentParentMapRepository:
         student_id,
         parent_id,
     ):
-
-        return (
-            db.query(
-                StudentParentMap
-            )
-            .filter(
+        query = (
+            select(StudentParentMap)
+            .where(
                 StudentParentMap.student_id == student_id,
                 StudentParentMap.parent_id == parent_id,
-                StudentParentMap.is_deleted == False,
+                StudentParentMap.is_deleted.is_(False),
             )
-            .first()
+        )
+
+        return db.scalar(
+            query
+        )
+
+    @staticmethod
+    def get_by_student_and_relationship(
+        db: Session,
+        student_id,
+        relationship_type: str,
+    ):
+        query = (
+            select(StudentParentMap)
+            .where(
+                StudentParentMap.student_id == student_id,
+                func.lower(
+                    StudentParentMap.relationship_type
+                )
+                == relationship_type.lower(),
+                StudentParentMap.is_deleted.is_(False),
+            )
+        )
+
+        return db.scalar(
+            query
         )

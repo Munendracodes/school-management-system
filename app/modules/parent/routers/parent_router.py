@@ -1,8 +1,10 @@
 from uuid import UUID
 
+from alembic.util import status
 from fastapi import (
     APIRouter,
     Depends,
+    HTTPException,
 )
 
 from sqlalchemy.orm import Session
@@ -11,6 +13,7 @@ from app.database.session import get_db
 
 from app.modules.parent.schemas.parent_schema import (
     ParentCreateSchema,
+    ParentCreateSchemaAndMapStudent,
     ParentUpdateSchema,
     ParentResponseSchema,
     StudentParentMappingCreateSchema,
@@ -21,6 +24,8 @@ from app.modules.parent.services.parent_service import (
     ParentService,
 )
 
+from app.modules.student_parent_map.schemas.student_parent_map_schema import StudentParentMapCreateSchema
+from app.modules.student_parent_map.services.student_parent_map_service import StudentParentMapService
 from app.modules.users.dependencies.current_user import (
     get_current_user,
 )
@@ -47,6 +52,22 @@ def create_parent(
     return ParentService.create_parent(
         db,
         payload,
+    )
+
+@router.post(
+    "/add_parent_and_map_student",
+    response_model=dict,
+)
+def add_parent_and_map_student(
+    payload: ParentCreateSchemaAndMapStudent,
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(
+        get_current_user
+    ),
+):
+    return ParentService.create_parent_and_map_student(
+        db=db,
+        payload=payload,
     )
 
 
@@ -105,16 +126,16 @@ def delete_parent(
     )
 
 
-@router.post(
-    "/map-student",
-    response_model=StudentParentMappingResponseSchema,
-)
-def map_student_parent(
-    payload: StudentParentMappingCreateSchema,
-    db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
-):
-    return ParentService.map_student_parent(
-        db,
-        payload,
-    )
+# @router.post(
+#     "/map-student",
+#     response_model=StudentParentMappingResponseSchema,
+# )
+# def map_student_parent(
+#     payload: StudentParentMappingCreateSchema,
+#     db: Session = Depends(get_db),
+#     current_user: UserModel = Depends(get_current_user),
+# ):
+#     return ParentService.map_student_parent(
+#         db,
+#         payload,
+#     )

@@ -37,8 +37,8 @@ class ParentRepository:
     def create(
         db: Session,
         payload: dict,
+        commit: bool = True,
     ):
-
         parent = Parent(
             **payload
         )
@@ -47,11 +47,11 @@ class ParentRepository:
             parent
         )
 
-        db.commit()
-
-        db.refresh(
-            parent
-        )
+        if commit:
+            db.commit()
+            db.refresh(
+                parent
+            )
 
         return parent
 
