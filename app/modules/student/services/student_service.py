@@ -89,10 +89,6 @@ class StudentService:
                     }
                 )
             
-            fee_information = {
-                "total_fee": 40000,
-                "paid_fee": 25000
-            }
 
             result.append(
                 {
@@ -117,8 +113,7 @@ class StudentService:
                         "name": student.section.classroom.academic_year.name,
                     },
 
-                    "parents": parents,
-                    "fee_information": fee_information,
+                    "parents": parents
                 }
             )
 
@@ -153,6 +148,11 @@ class StudentService:
                     "mobile_number": mapping.parent.mobile_number,
                 }
             )
+        
+        fee_information = {
+            "total_fee": 40000,
+            "paid_fee": 25000
+        }
 
         return {
             "id": student.id,
@@ -177,6 +177,7 @@ class StudentService:
             },
 
             "parents": parents,
+            "fee_information": fee_information
         }
 
     @staticmethod
